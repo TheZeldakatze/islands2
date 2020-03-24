@@ -1,17 +1,21 @@
 package de.victorswelt;
 
 public class Transport {
+	public static final int TRANSPORT_SPEED = 2;
+	
 	Level level;
 	Island target;
-	int x,y,dx,dy,amount,team;
+	float x,y,dx,dy;
+	int size,team;
 	
-	public Transport(Level l, int nx, int ny, int ndx, int ndy, int nteam, int ntarget) {
-		target = l.getIsland(ntarget);
+	public Transport(Level l, int nx, int ny, float ndx, float ndy, int nteam, int nsize, Island ntarget) {
+		target = ntarget;
 		x = nx;
 		y = ny;
 		dx = ndx;
 		dy = ndy;
 		team = nteam;
+		size = nsize;
 	}
 	
 	/**
@@ -23,7 +27,7 @@ public class Transport {
 		y+=dy;
 		
 		// check for a collision with the target
-		if(Utils.checkCollision(x, y, SpriteManager.TRANSPORT_WIDTH, SpriteManager.TRANSPORT_HEIGHT, target.x, target.y, SpriteManager.TRANSPORT_WIDTH, SpriteManager.TRANSPORT_HEIGHT)) {
+		if(Utils.checkCollision((int) x, (int) y, SpriteManager.TRANSPORT_WIDTH, SpriteManager.TRANSPORT_HEIGHT, target.x, target.y, SpriteManager.TRANSPORT_WIDTH, SpriteManager.TRANSPORT_HEIGHT)) {
 			
 			// TODO apply the transport
 			

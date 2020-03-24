@@ -16,16 +16,14 @@ public class Game implements MouseInterface {
 	
 	public Game() {
 		Island i[] = {
-				new Island("Harbourgh Island", 64, 64, 0, 56),
-				new Island("Seen", 128, 80, 2, 56),
-				new Island("Seen", 500, 320, 2, 56),
+				new Island("Seen", 128, 128, 2, 56), new Island("Seen", 128, 256, 2, 56), new Island("Seen", 128, 0, 2, 56),
+				new Island("Seen", 256, 128, 2, 56), new Island("Seen", 256, 256, 2, 56), new Island("Seen", 256, 0, 2, 56),
+				new Island("Seen", 384, 128, 2, 56), new Island("Seen", 384, 256, 2, 56), new Island("Seen", 384, 0, 2, 56),
 		};
 		playerAttack = new Attack();
 		playerAttack.source = 0;
 		level = new Level(i);
 		playerAttack = new Attack();
-		
-		level.transports.add(new Transport(level, 300, 300, 1, 1, 0, 1));
 		
 		// add the object to the MouseHandler list
 		MouseHandler.getInstance().add_interface(this);
@@ -44,8 +42,10 @@ public class Game implements MouseInterface {
 		// draw every island
 		g.setColor(Color.WHITE);
 		g.setFont(FONT_POPULATION_INFO);
-		for(int i = 0; i<level.islands.length; i++) {
-			Island island = level.islands[i];
+		
+		Island islands[] = level.getIslands();
+		for(int i = 0; i<islands.length; i++) {
+			Island island = islands[i];
 			g.drawImage(SpriteManager.getInstance().getMapIslandImage(island.team), island.x, island.y, null);
 			g.drawString("" + island.population, island.x + 12, island.y + FONT_POPULATION_INFO.getSize());
 		}
@@ -73,7 +73,7 @@ public class Game implements MouseInterface {
 		ArrayList transports = level.getTransports();
 		for(int i = 0; i<transports.size(); i++) {
 			Transport t = (Transport) transports.get(i);
-			g.fillRect(t.x, t.y, SpriteManager.TRANSPORT_WIDTH, SpriteManager.TRANSPORT_HEIGHT);
+			g.fillRect((int) t.x, (int) t.y, SpriteManager.TRANSPORT_WIDTH, SpriteManager.TRANSPORT_HEIGHT);
 		}
 		
 		// TODO draw the hud
@@ -82,7 +82,6 @@ public class Game implements MouseInterface {
 	}
 
 	public void onMouseClick(int x, int y) {
-		System.out.println(x +" " + y);
 		Island islands[] = level.getIslands();
 		
 		// check if an island was selected
@@ -92,7 +91,13 @@ public class Game implements MouseInterface {
 				return;
 			}
 		}
+		
+		// a temporary trigger
+		// TODO remove
+		level.addTransport(playerAttack.source, playerAttack.target);
+		playerAttack.reset();
 	}
 
 	public void onMouseMove(int x, int y) {}
+
 }
