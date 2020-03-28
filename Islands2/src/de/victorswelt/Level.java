@@ -3,10 +3,12 @@ package de.victorswelt;
 import java.util.ArrayList;
 
 public class Level {
+	int playerTeam;
 	private Island islands[];
 	private transient ArrayList transports;
 	
 	public Level(Island i[]) {
+		playerTeam = 0;
 		transports = new ArrayList();
 		islands = i;
 	}

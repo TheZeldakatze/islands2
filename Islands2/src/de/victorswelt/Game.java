@@ -12,14 +12,13 @@ public class Game implements MouseInterface {
 	private static final Font FONT_POPULATION_INFO = new Font(Font.MONOSPACED, Font.PLAIN, 10);
 	
 	Level level;
-	int playerTeam;
 	Attack playerAttack;
 	//AffineTransform transform, transform2;
 	
 	public Game() {
 		Island i[] = {
 				new Island("Seen", 128, 128, 2, 56), new Island("Seen", 128, 256, 1, 56), new Island("Seen", 128, 0, 2, 56),
-				new Island("Seen", 256, 128, 2, 56), new Island("Seen", 256, 256, 1, 56), new Island("Seen", 256, 0, 2, 56),
+				new Island("Seen", 256, 128, 2, 56), new Island("Seen", 256, 256, 0, 56), new Island("Seen", 256, 0, 2, 56),
 				new Island("Seen", 384, 128, 2, 56), new Island("Seen", 384, 256, 1, 56), new Island("Seen", 384, 0, 2, 56),
 		};
 		playerAttack = new Attack();
@@ -98,7 +97,9 @@ public class Game implements MouseInterface {
 		// check if an island was selected
 		for(int i = 0; i<islands.length; i++) {
 			if(Utils.checkCollision(islands[i].x, islands[i].y, 32, 32, x, y, 1, 1)) {
-				playerAttack.setIsland(i);
+				
+				if(!(playerAttack.source == -1 && islands[i].team != level.playerTeam)) // don´t set islands which aren´t in the player team as sources
+					playerAttack.setIsland(i);
 				return;
 			}
 		}
