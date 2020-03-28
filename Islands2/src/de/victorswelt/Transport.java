@@ -30,6 +30,17 @@ public class Transport {
 		if(Utils.checkCollision((int) x, (int) y, SpriteManager.TRANSPORT_WIDTH, SpriteManager.TRANSPORT_HEIGHT, target.x, target.y, SpriteManager.TRANSPORT_WIDTH, SpriteManager.TRANSPORT_HEIGHT)) {
 			
 			// TODO apply the transport
+			if(target.team == team) {
+				target.population+=size;
+			}
+			else {
+				target.population -= size;
+				
+				if(target.population<0) {
+					target.team = team;
+					target.population = -target.population;
+				}
+			}
 			
 			return true;
 		}

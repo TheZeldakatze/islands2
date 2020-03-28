@@ -6,15 +6,18 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.awt.event.MouseMotionListener;
 import java.awt.image.VolatileImage;
 import java.io.IOException;
-
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 public class Main extends JPanel implements Runnable {
+	private static final long serialVersionUID = 1L;
+	
+	public static final int GAME_TICK_LENGTH = 12;
+	public static final int TICKS_PER_SECOND = 1000 / 12;
+	
 	private static final int SCREEN_WIDTH = 640;
 	private static final int SCREEN_HEIGHT = 480;
 	

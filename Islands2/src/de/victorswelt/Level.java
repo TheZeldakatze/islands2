@@ -26,11 +26,14 @@ public class Level {
 	}
 	
 	public void update() {
+		// update the islands
 		for(int i = 0; i<islands.length; i++)
 			islands[i].update();
 		
+		// update the transports
 		for(int i = 0; i<transports.size(); i++)
-			((Transport) transports.get(i)).update();
+			if(((Transport) transports.get(i)).update())
+				transports.remove(i);
 	}
 	
 	/**

@@ -3,6 +3,7 @@ package de.victorswelt;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 
 public class Game implements MouseInterface {
@@ -13,17 +14,20 @@ public class Game implements MouseInterface {
 	Level level;
 	int playerTeam;
 	Attack playerAttack;
+	//AffineTransform transform, transform2;
 	
 	public Game() {
 		Island i[] = {
-				new Island("Seen", 128, 128, 2, 56), new Island("Seen", 128, 256, 2, 56), new Island("Seen", 128, 0, 2, 56),
-				new Island("Seen", 256, 128, 2, 56), new Island("Seen", 256, 256, 2, 56), new Island("Seen", 256, 0, 2, 56),
-				new Island("Seen", 384, 128, 2, 56), new Island("Seen", 384, 256, 2, 56), new Island("Seen", 384, 0, 2, 56),
+				new Island("Seen", 128, 128, 2, 56), new Island("Seen", 128, 256, 1, 56), new Island("Seen", 128, 0, 2, 56),
+				new Island("Seen", 256, 128, 2, 56), new Island("Seen", 256, 256, 1, 56), new Island("Seen", 256, 0, 2, 56),
+				new Island("Seen", 384, 128, 2, 56), new Island("Seen", 384, 256, 1, 56), new Island("Seen", 384, 0, 2, 56),
 		};
 		playerAttack = new Attack();
 		playerAttack.source = 0;
 		level = new Level(i);
 		playerAttack = new Attack();
+		//transform = new AffineTransform();
+		// transform2 = new AffineTransform();
 		
 		// add the object to the MouseHandler list
 		MouseHandler.getInstance().add_interface(this);
@@ -63,6 +67,7 @@ public class Game implements MouseInterface {
 			// find the island
 			Island i = level.getIsland(playerAttack.target);
 			if(i != null) {
+				
 				g.setColor(Color.RED);
 				g.drawOval(i.x - 16, i.y - 16, 64, 64);
 			}
@@ -71,10 +76,16 @@ public class Game implements MouseInterface {
 		// draw the transports
 		g.setColor(Color.RED);
 		ArrayList transports = level.getTransports();
+		AffineTransform save_transform = g.getTransform();
+		//g.setTransform(transform);
 		for(int i = 0; i<transports.size(); i++) {
 			Transport t = (Transport) transports.get(i);
+			//transform.setToTranslation(t.x, t.y);
+			//transform2.setToRotation(Math.atan(t.y / t.x));
+			//transform.concatenate(transform2);
 			g.fillRect((int) t.x, (int) t.y, SpriteManager.TRANSPORT_WIDTH, SpriteManager.TRANSPORT_HEIGHT);
 		}
+		g.setTransform(save_transform);
 		
 		// TODO draw the hud
 		g.drawImage(SpriteManager.getInstance().hud, 0, height - SpriteManager.getInstance().hud.getHeight(null), null);
