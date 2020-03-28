@@ -1,4 +1,4 @@
-package de.victorswelt;
+ package de.victorswelt;
 
 public class Attack {
 	int source,target;

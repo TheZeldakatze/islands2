@@ -6,11 +6,38 @@ public class Level {
 	int playerTeam;
 	private Island islands[];
 	private transient ArrayList transports;
+	private transient ArrayList teams;
 	
-	public Level(Island i[]) {
+	public Level(Island nislands[]) {
 		playerTeam = 0;
 		transports = new ArrayList();
-		islands = i;
+		islands = nislands;
+		
+		// create the teams
+		teams = new ArrayList();
+		
+		// iterate through all islands
+		for(int i = 0; i<islands.length;i++) {
+			
+			// check if the island is in a team
+			boolean hasTeam = false;
+			for(int j = 0; j<teams.size(); j++) {
+				Team t = (Team) teams.get(j);
+				if(t.getId() == islands[i].team) {
+					hasTeam = true;
+					break;
+				}
+			}
+			
+			
+			// if the team does not exist, create one
+			if(!hasTeam) {
+				if(islands[i].team == playerTeam)
+					teams.add(new Team(islands[i].team));
+				else
+					teams.add(new AiTeam(islands[i].team));
+			}
+		}
 	}
 	
 	public Island[] getIslands() {
@@ -36,6 +63,11 @@ public class Level {
 		for(int i = 0; i<transports.size(); i++)
 			if(((Transport) transports.get(i)).update())
 				transports.remove(i);
+		
+		// update the teams (and AIs)
+		for(int j = 0; j<teams.size(); j++)
+			((Team) teams.get(j)).update(this);
+			
 	}
 	
 	/**
