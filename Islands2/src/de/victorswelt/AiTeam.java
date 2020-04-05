@@ -8,7 +8,7 @@ public class AiTeam extends Team {
 	public void update(Level l) {
 		ticks_to_next_second--;
 		if(ticks_to_next_second <= 0) {
-			ticks_to_next_second = Main.TICKS_PER_SECOND * 3;
+			ticks_to_next_second = (int) (Main.TICKS_PER_SECOND * 5);
 			
 			Island islands[] = l.getIslands();
 			
