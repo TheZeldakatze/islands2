@@ -105,4 +105,40 @@ public class Level {
 			transports.add(new Transport(this, source_island.x, source_island.y, dx, dy, source_island.team, size, target_island));
 		}
 	}
+	
+	public static Level createLevel(String level) {
+		
+		// get the lines
+		String lines[] = level.split("\n");
+		
+		// create the islands
+		ArrayList islands = new ArrayList();
+		for(int i = 0; i<lines.length; i++) {
+			// split the line
+			String parts[] = lines[i].split(" ");
+			
+			// check for the length
+			if(parts.length == 4) {
+				try {
+					int x          = Integer.parseInt(parts[0]);
+					int y          = Integer.parseInt(parts[1]);
+					int team       = Integer.parseInt(parts[2]);
+					int population = Integer.parseInt(parts[3]);
+					
+					islands.add(new Island(x, y, team, population));
+				} catch(Exception e) {
+					System.out.println("Level: malformed line: " + i + " (not a number)");
+				}
+			}
+			else
+				System.out.println("Level: malformed line: " + i + " (invalid length)");
+		}
+		
+		// create an array
+		Island arr[] = new Island[islands.size()];
+		for(int i = 0; i<arr.length;i++)
+			arr[i] = (Island) islands.get(i);
+		
+		return new Level(arr);
+	}
 }

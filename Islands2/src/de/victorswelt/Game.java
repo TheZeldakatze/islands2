@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 public class Game implements MouseInterface {
@@ -16,14 +18,29 @@ public class Game implements MouseInterface {
 	AffineTransform transform, transform2;
 	
 	public Game() {
-		Island i[] = {
-				new Island("Seen", 128, 128, 0, 56), new Island("Seen", 128, 256, 1, 56), new Island("Seen", 128, 0, 2, 56),
-				new Island("Seen", 256, 128, 1, 56), new Island("Seen", 256, 256, 0, 56), new Island("Seen", 256, 0, 0, 56),
-				new Island("Seen", 384, 128, 2, 56), new Island("Seen", 384, 256, 1, 56), new Island("Seen", 384, 0, 2, 56),
-		};
+		/*Island i[] = {
+				new Island(128, 128, 0, 56), new Island(128, 256, 1, 56), new Island(128, 0, 2, 56),
+				new Island(256, 128, 1, 56), new Island(256, 256, 0, 56), new Island(256, 0, 0, 56),
+				new Island(384, 128, 2, 56), new Island(384, 256, 1, 56), new Island(384, 0, 2, 56),
+		};level = new Level(i);*/
+		
+		
+		// get the level data
+		String level_string = "";
+		InputStream is = Game.class.getResourceAsStream("/test.lvl");
+		try {
+			while(is.available()>0) {
+				level_string = level_string + ((char) is.read());
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		// create a level
+		level = Level.createLevel(level_string);
+		
 		playerAttack = new Attack();
 		playerAttack.source = 0;
-		level = new Level(i);
 		playerAttack = new Attack();
 		transform = new AffineTransform();
 		transform2 = new AffineTransform();
@@ -88,7 +105,7 @@ public class Game implements MouseInterface {
 		g.setTransform(save_transform);
 		
 		// TODO draw the hud
-		g.drawImage(SpriteManager.getInstance().hud, 0, height - SpriteManager.getInstance().hud.getHeight(null), null);
+		g.drawImage(SpriteManager.getInstance().hud, 0, height - SpriteManager.getInstance().hud.getHeight(null), null); 
 		
 	}
 
