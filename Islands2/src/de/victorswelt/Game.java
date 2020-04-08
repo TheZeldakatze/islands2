@@ -90,7 +90,6 @@ public class Game implements MouseInterface {
 		}
 		
 		// draw the transports
-		g.setColor(Color.RED);
 		ArrayList transports = level.getTransports();
 		AffineTransform save_transform = g.getTransform();
 		for(int i = 0; i<transports.size(); i++) {
@@ -100,7 +99,8 @@ public class Game implements MouseInterface {
 			transform2.setToRotation(Math.atan(t.y / t.x));
 			transform.concatenate(transform2);
 			g.setTransform(transform);
-			g.fillRect((int) 0, (int) 0, SpriteManager.TRANSPORT_WIDTH, SpriteManager.TRANSPORT_HEIGHT);
+			
+			g.drawImage(SpriteManager.getInstance().getPlaneImage(t.team), 0, 0, null);
 		}
 		g.setTransform(save_transform);
 		

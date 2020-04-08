@@ -118,6 +118,10 @@ public class Main extends JPanel implements Runnable {
 				break;
 			}
 			
+			case STATE_MAIN_MENU: {
+				break;
+			}
+			
 			case STATE_GAME: {
 				game.update();
 				break;
@@ -149,6 +153,10 @@ public class Main extends JPanel implements Runnable {
 					loading_banner.flush();
 					System.gc(); // I know that you should not use System.gc(), but here would be an excellent time for a garbage collection
 					state = STATE_GAME;
+					break;
+				}
+				
+				case STATE_MAIN_MENU: {
 					break;
 				}
 				

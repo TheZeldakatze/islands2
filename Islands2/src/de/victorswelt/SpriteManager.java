@@ -31,7 +31,7 @@ public class SpriteManager {
 	
 	ColourReplacementFilter replacementFilter;
 	Image islandMapIcons[];
-	Image islandHudIcons[];
+	Image planeIcons[];
 	Image hud;
 	
 	private SpriteManager() throws IOException {
@@ -39,16 +39,16 @@ public class SpriteManager {
 		
 		// initialize the island images
 		Image island_map_icon = ImageIO.read(Main.class.getResource("sprite/island.png"));
-		Image island_hud_icon = island_map_icon.getScaledInstance(64, 64, Image.SCALE_REPLICATE);
+		Image plane_icon      = ImageIO.read(Main.class.getResource("sprite/plane.png"));
 		
 		// initialize the arrays
-		islandHudIcons = new Image[islandColours.length];
 		islandMapIcons = new Image[islandColours.length];
+		planeIcons     = new Image[islandColours.length];
 		
 		// create the individual images
 		for(int i = 0; i<islandColours.length;i++) {
-			islandHudIcons[i] = replaceColourInImage(island_hud_icon, ISLAND_COLOR_KEY, islandColours[i]);
 			islandMapIcons[i] = replaceColourInImage(island_map_icon, ISLAND_COLOR_KEY, islandColours[i]);
+			planeIcons[i]     = replaceColourInImage(plane_icon     , ISLAND_COLOR_KEY, islandColours[i]);
 		}
 		
 		// load the hud
@@ -56,9 +56,15 @@ public class SpriteManager {
 	}
 	
 	public Image getMapIslandImage(int team) {
-		if(team<0 || team > islandColours.length)
+		if(team<0 || team > islandColours.length-1)
 			return islandMapIcons[0];
 		return islandMapIcons[team];
+	}
+	
+	public Image getPlaneImage(int team) {
+		if(team<0 || team > islandColours.length-1)
+			return planeIcons[0];
+		return planeIcons[team];
 	}
 	
 	private Image replaceColourInImage(Image i, Color original, Color replacement) {

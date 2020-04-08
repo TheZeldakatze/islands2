@@ -1,7 +1,7 @@
 package de.victorswelt;
 
 public class Transport {
-	public static final int TRANSPORT_SPEED = 2;
+	public static final int TRANSPORT_SPEED = 1;
 	
 	Level level;
 	Island target;
