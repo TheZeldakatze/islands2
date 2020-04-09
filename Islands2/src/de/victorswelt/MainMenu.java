@@ -5,7 +5,7 @@ import java.awt.Graphics2D;
 
 public class MainMenu {
 	private Button buttons[] = {
-			new Button("Play!", 180, 50, 320, 40),
+			new Button("Play!", 230, 50, 180, 40),
 	};
 	
 	public int update() {

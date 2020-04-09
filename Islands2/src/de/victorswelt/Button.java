@@ -24,15 +24,15 @@ public class Button implements MouseInterface {
 	
 	public void render(Graphics g) {
 		if(selected)
-			g.setColor(Color.CYAN);
+			g.setColor(Color.LIGHT_GRAY);
 		else
 			g.setColor(Color.GRAY);
 		g.fillRect(x, y, width, height);
 		FontMetrics fm = g.getFontMetrics();
 		int fontWidth = fm.stringWidth(text);
-		int fontHeight= fm.getHeight();
 		g.setColor(Color.WHITE);
-		g.drawString(text, x + width / 2 - fontWidth / 2, y + height / 2- fm.getDescent() / 2);
+		g.drawRect(x, y, width, height);
+		g.drawString(text, x + width / 2 - fontWidth / 2, y + (height / 2 - fm.getHeight() / 2) + fm.getAscent());
 	}
 	
 	public void onMouseClick(int x, int y) {
