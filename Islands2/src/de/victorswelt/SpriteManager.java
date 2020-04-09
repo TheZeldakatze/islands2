@@ -32,7 +32,7 @@ public class SpriteManager {
 	ColourReplacementFilter replacementFilter;
 	Image islandMapIcons[];
 	Image planeIcons[];
-	Image hud;
+	Image logo, hud;
 	
 	private SpriteManager() throws IOException {
 		replacementFilter = new ColourReplacementFilter();
@@ -53,6 +53,7 @@ public class SpriteManager {
 		
 		// load the hud
 		hud = ImageIO.read(Main.class.getResource("sprite/hud.png"));
+		logo = ImageIO.read(Main.class.getResource("sprite/logo.gif"));
 	}
 	
 	public Image getMapIslandImage(int team) {

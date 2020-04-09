@@ -118,6 +118,9 @@ public class Main extends JPanel implements Runnable {
 			}
 			
 			case STATE_CLEANUP: {
+				loading_banner.flush();
+				System.gc(); // I know that you should not use System.gc(), but here would be an excellent time for a garbage collection
+				state = STATE_MAIN_MENU;
 				break;
 			}
 			
@@ -159,9 +162,6 @@ public class Main extends JPanel implements Runnable {
 				}
 				
 				case STATE_CLEANUP: {
-					loading_banner.flush();
-					System.gc(); // I know that you should not use System.gc(), but here would be an excellent time for a garbage collection
-					state = STATE_MAIN_MENU;
 					break;
 				}
 				

@@ -5,7 +5,7 @@ import java.awt.Graphics2D;
 
 public class MainMenu {
 	private Button buttons[] = {
-			new Button("Play!", 230, 50, 180, 40),
+			new Button("Play!", 230, 150, 180, 40),
 	};
 	
 	public int update() {
@@ -19,6 +19,11 @@ public class MainMenu {
 	public void render(Graphics2D g, int width, int height) {
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, width, height);
+		
+		// draw the logo
+		g.drawImage(SpriteManager.getInstance().logo, width / 2 - 160, 10, null);
+		
+		// draw every button
 		for(int i = 0; i<buttons.length; i++)
 			buttons[i].render(g);
 	}
