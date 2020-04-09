@@ -47,6 +47,7 @@ public class Game implements MouseInterface {
 		
 		// add the object to the MouseHandler list
 		MouseHandler.getInstance().add_interface(this);
+		
 	}
 	
 	public void update() {

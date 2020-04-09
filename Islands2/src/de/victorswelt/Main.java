@@ -8,6 +8,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.image.VolatileImage;
 import java.io.IOException;
+
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -32,6 +33,7 @@ public class Main extends JPanel implements Runnable {
 	int state;
 	
 	Game game;
+	MainMenu main_menu;
 	
 	public static void main(String[] args) {
 		JFrame frame = new JFrame();
@@ -88,6 +90,7 @@ public class Main extends JPanel implements Runnable {
 			
 			e.printStackTrace();
 		}
+		main_menu = new MainMenu();
 		
 		// when the initialization is finished, change the state to the cleanup one
 		state = STATE_CLEANUP;
@@ -119,6 +122,12 @@ public class Main extends JPanel implements Runnable {
 			}
 			
 			case STATE_MAIN_MENU: {
+				switch(main_menu.update()) {
+					case 0:
+						state = STATE_GAME;
+						main_menu.setEnabled(false);
+						break;
+				};
 				break;
 			}
 			
@@ -152,11 +161,12 @@ public class Main extends JPanel implements Runnable {
 				case STATE_CLEANUP: {
 					loading_banner.flush();
 					System.gc(); // I know that you should not use System.gc(), but here would be an excellent time for a garbage collection
-					state = STATE_GAME;
+					state = STATE_MAIN_MENU;
 					break;
 				}
 				
 				case STATE_MAIN_MENU: {
+					main_menu.render(g, SCREEN_WIDTH, SCREEN_HEIGHT);
 					break;
 				}
 				
