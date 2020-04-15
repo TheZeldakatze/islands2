@@ -50,8 +50,9 @@ public class Game implements MouseInterface {
 		
 	}
 	
-	public void update() {
+	public boolean update() {
 		level.update();
+		return level.isGameOver();
 	}
 	
 	public void render(Graphics2D g, int width, int height) {
@@ -69,6 +70,13 @@ public class Game implements MouseInterface {
 			Island island = islands[i];
 			g.drawImage(SpriteManager.getInstance().getMapIslandImage(island.team), island.x, island.y, null);
 			g.drawString("" + island.population, island.x + 12, island.y + FONT_POPULATION_INFO.getSize());
+		}
+		
+		// draw the obstacles
+		Obstacle obstacles[] = level.getObstacles();
+		for(int i = 0; i<obstacles.length; i++) {
+			Obstacle o = obstacles[i];
+			g.drawImage(SpriteManager.getInstance().obstacle, o.x, o.y, null);
 		}
 		
 		// draw the circles visualizing the player selection

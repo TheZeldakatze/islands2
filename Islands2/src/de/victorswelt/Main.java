@@ -135,7 +135,11 @@ public class Main extends JPanel implements Runnable {
 			}
 			
 			case STATE_GAME: {
-				game.update();
+				if(game.update()) {
+					// the game is over
+					state = STATE_MAIN_MENU;
+				}
+				
 				break;
 			}
 		}
