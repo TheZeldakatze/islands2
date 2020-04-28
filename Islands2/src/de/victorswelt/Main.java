@@ -26,7 +26,8 @@ public class Main extends JPanel implements Runnable {
 	private static final byte STATE_CLEANUP = -127;
 	
 	private static final byte STATE_MAIN_MENU    = 0;
-	private static final byte STATE_GAME         = 1;
+	private static final byte STATE_LEVEL_MENU   = 1;
+	private static final byte STATE_GAME         = 2;
 	
 	VolatileImage screen;
 	Image loading_banner;
@@ -34,6 +35,7 @@ public class Main extends JPanel implements Runnable {
 	
 	Game game;
 	MainMenu main_menu;
+	LevelMenu level_menu;
 	
 	public static void main(String[] args) {
 		JFrame frame = new JFrame();
@@ -90,6 +92,7 @@ public class Main extends JPanel implements Runnable {
 			
 			e.printStackTrace();
 		}
+		level_menu = new LevelMenu(game);
 		main_menu = new MainMenu();
 		
 		// when the initialization is finished, change the state to the cleanup one
@@ -127,8 +130,18 @@ public class Main extends JPanel implements Runnable {
 			case STATE_MAIN_MENU: {
 				switch(main_menu.update()) {
 					case 0:
-						state = STATE_GAME;
+						state = STATE_LEVEL_MENU;
 						main_menu.setEnabled(false);
+						break;
+				};
+				break;
+			}
+			
+			case STATE_LEVEL_MENU: {
+				switch(level_menu.update()) {
+					case 0:
+						state = STATE_GAME;
+						level_menu.setEnabled(false);
 						break;
 				};
 				break;
@@ -171,6 +184,11 @@ public class Main extends JPanel implements Runnable {
 				
 				case STATE_MAIN_MENU: {
 					main_menu.render(g, SCREEN_WIDTH, SCREEN_HEIGHT);
+					break;
+				}
+				
+				case STATE_LEVEL_MENU: {
+					level_menu.render(g, SCREEN_WIDTH, SCREEN_HEIGHT);
 					break;
 				}
 				

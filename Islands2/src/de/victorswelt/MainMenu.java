@@ -4,14 +4,21 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 
 public class MainMenu {
+	private boolean enabled = true;
 	private Button buttons[] = {
 			new Button("Play!", 230, 150, 180, 40),
 	};
 	
 	public int update() {
+		
+		// if the menu is disabled, enable it
+		if(!enabled)
+			setEnabled(true);
+		
 		for(int i = 0; i<buttons.length; i++)
-			if(buttons[i].wasPressed)
+			if(buttons[i].wasPressed) {
 				return i;
+			}
 		
 		return -1;
 	}
@@ -29,9 +36,9 @@ public class MainMenu {
 	}
 	
 	public void setEnabled(boolean b) {
-		for(int i = 0; i<buttons.length; i++)
+		enabled = b;
+		for(int i = 0; i<buttons.length; i++) {
 			buttons[i].setEnabled(b);
-		for(int i = 0; i<buttons.length; i++)
-			buttons[i].wasPressed = false;
+		}
 	}
 }

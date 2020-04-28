@@ -20,6 +20,8 @@ public class Button implements MouseInterface {
 
 	public void setEnabled(boolean b) {
 		enabled = b;
+		selected = false;
+		wasPressed = false;
 	}
 	
 	public void render(Graphics g) {

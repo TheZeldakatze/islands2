@@ -27,7 +27,7 @@ public class Game implements MouseInterface {
 		
 		// get the level data
 		String level_string = "";
-		InputStream is = Game.class.getResourceAsStream("/test.lvl");
+		InputStream is = Game.class.getResourceAsStream("/de/victorswelt/level/test.lvl");
 		try {
 			while(is.available()>0) {
 				level_string = level_string + ((char) is.read());
@@ -53,6 +53,10 @@ public class Game implements MouseInterface {
 	public boolean update() {
 		level.update();
 		return level.isGameOver();
+	}
+	
+	public void setLevel(Level l) {
+		level = l;
 	}
 	
 	public void render(Graphics2D g, int width, int height) {
