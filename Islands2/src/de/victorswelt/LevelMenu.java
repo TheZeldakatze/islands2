@@ -7,13 +7,21 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 public class LevelMenu {
+	private static final int LEVELS_PER_PAGE = 5;
+	
 	private Game game;
 	private boolean enabled = false;
 	private LevelPage pages[];
 	private int current_page;
 	
+	private Button previous_page, next_page;
+	
 	public LevelMenu(Game g) {
 		game = g;
+		
+		// initialize the navigation buttons
+		previous_page = new Button("Previous Page", 30, 400, 100, 30);
+		next_page     = new Button("Next Page", 500, 400, 100, 30);
 		
 		// load the level list
 		String list_string = "";
@@ -37,19 +45,19 @@ public class LevelMenu {
 			String split[] = lines[l].split(" ");
 			
 			if(split.length == 2) {
-				buttons.add(new LevelButton(split[1], 100, (l % 4) * 40 + 30, 100, 30, split[0]));
+				buttons.add(new LevelButton(split[1], 160, (l % LEVELS_PER_PAGE) * 40 + 30, 320, 30, split[0]));
 			}
 			else
 				System.out.println("Could not parse entry in LevelList.lst! line: " + l + " (invalid length: " + split.length + ")");
 		}
 		
 		// create the pages
-		pages = new LevelPage[(int) (Math.floor(buttons.size() / 4D) + 1)];
+		pages = new LevelPage[(int) (Math.floor(buttons.size() / LEVELS_PER_PAGE) + 1)];
 		
 		for(int p = 0; p<pages.length; p++) {
 			
 			// map 4 buttons to an array
-			int limit = Math.min(4, buttons.size());
+			int limit = Math.min(LEVELS_PER_PAGE, buttons.size());
 			LevelButton pageButtons[] = new LevelButton[limit];
 			for(int i = 0; i<limit; i++) {
 				pageButtons[i] = (LevelButton) buttons.get(0);
@@ -62,36 +70,43 @@ public class LevelMenu {
 	}
 	
 	public int update() {
+		
+		// check if a navigation button was pressed
+		if(next_page.wasPressed) {
+			// reset it
+			next_page.wasPressed = false;
+			
+			// check if there is a next page
+			if(current_page < pages.length - 1) {
+				// disable the current page
+				pages[current_page].setEnabled(false);
+				
+				// increment the page index
+				current_page++;
+				System.out.println(current_page);
+				
+				// enable the current page
+				pages[current_page].setEnabled(true);
+			}
+		}
+		
+		if(previous_page.wasPressed) {
+			previous_page.wasPressed = false;
+			if(current_page>0) {
+				// disable the current page
+				pages[current_page].setEnabled(false);
+				
+				// decrement the page index
+				current_page--;
+				
+				// enable the current page
+				pages[current_page].setEnabled(true);
+			}
+		}
+		
 		switch(pages[current_page].update()) {
 			case LevelPage.UPDATE_DEFAULT:
 				return -1;
-			case LevelPage.UPDATE_NEXT_PAGE: {
-				if(current_page < pages.length - 1) {
-					// disable the current page
-					pages[current_page].setEnabled(false);
-					
-					// increment the page index
-					current_page++;
-					System.out.println(current_page);
-					
-					// enable the current page
-					pages[current_page].setEnabled(true);
-				}
-				break;
-			}
-			case LevelPage.UPDATE_PREV_PAGE: {
-				if(current_page>0) {
-					// disable the current page
-					pages[current_page].setEnabled(false);
-					
-					// decrement the page index
-					current_page--;
-					
-					// enable the current page
-					pages[current_page].setEnabled(true);
-				}
-				break;
-			}
 			case LevelPage.UPDATE_LEVEL_SELECTED: {
 				return 0;
 			}
@@ -105,12 +120,18 @@ public class LevelMenu {
 		// draw the page
 		pages[current_page].render(g, width, height);
 		
+		// draw the navigation
+		previous_page.render(g);
+		next_page.render(g);
+		
 		// draw the index
-		g.drawString("Page: " + (current_page + 1) + " / " + pages.length, 310, 460);
+		g.drawString("Page: " + (current_page + 1) + " / " + pages.length, 300, 420);
 		
 	}
 	
 	public void setEnabled(boolean b) {
+		previous_page.setEnabled(b);
+		next_page.setEnabled(b);
 		
 		// reset the menu
 		pages[current_page].setEnabled(false);
@@ -122,21 +143,16 @@ public class LevelMenu {
 
 class LevelPage {
 	static final int UPDATE_DEFAULT = 0;
-	static final int UPDATE_NEXT_PAGE = 1;
-	static final int UPDATE_PREV_PAGE = 2;
 	static final int UPDATE_LEVEL_SELECTED = 3;
 	
 	private boolean enabled = false;
 	
 	private Game game;
 	
-	Button previous, next;
 	LevelButton buttons[];
 	
 	public LevelPage(LevelButton nbuttons[], Game ngame) {
 		buttons = nbuttons;
-		previous = new Button("Previous Page", 10, 400, 100, 30);
-		next = new Button("Next Page", 530, 400, 100, 30);
 		game = ngame;
 	}
 	
@@ -146,15 +162,6 @@ class LevelPage {
 		if(!enabled)
 			setEnabled(true);
 		
-		// check if the user pressed a navigation key
-		if(next.wasPressed){
-			next.wasPressed = false;
-			return UPDATE_NEXT_PAGE;
-		}
-		if(previous.wasPressed) {
-			previous.wasPressed = false;
-			return UPDATE_PREV_PAGE;
-		}
 		// check if the user pressed a level button
 		for(int i = 0; i<buttons.length; i++) {
 			if(buttons[i].wasPressed) {
@@ -193,10 +200,6 @@ class LevelPage {
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, width, height);
 		
-		// draw the navigation buttons
-		previous.render(g);
-		next.render(g);
-		
 		// draw the level buttons
 		for(int i = 0; i<buttons.length; i++) {
 			buttons[i].render(g);
@@ -205,8 +208,6 @@ class LevelPage {
 	}
 	
 	public void setEnabled(boolean b) {
-		previous.setEnabled(b);
-		next.setEnabled(b);
 		for(int i = 0; i<buttons.length; i++) {
 			if(buttons[i] != null)
 				buttons[i].setEnabled(b);
