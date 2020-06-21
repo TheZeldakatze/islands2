@@ -42,7 +42,7 @@ public class LevelMenu {
 		
 		for(int l = 0; l < lines.length; l++) {
 			
-			String split[] = lines[l].split(" ");
+			String split[] = lines[l].split(" ", 2);
 			
 			if(split.length == 2) {
 				buttons.add(new LevelButton(split[1], 160, (l % LEVELS_PER_PAGE) * 40 + 30, 320, 30, split[0]));
@@ -83,7 +83,6 @@ public class LevelMenu {
 				
 				// increment the page index
 				current_page++;
-				System.out.println(current_page);
 				
 				// enable the current page
 				pages[current_page].setEnabled(true);

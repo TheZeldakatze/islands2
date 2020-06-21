@@ -104,18 +104,21 @@ public class Game implements MouseInterface {
 		
 		// draw the transports
 		ArrayList transports = level.getTransports();
-		AffineTransform save_transform = g.getTransform();
+		//AffineTransform save_transform = g.getTransform();
 		for(int i = 0; i<transports.size(); i++) {
 			Transport t = (Transport) transports.get(i);
-			transform.setToTranslation(t.x, t.y);
+			/*transform.setToTranslation(t.x, t.y);
 			
 			transform2.setToRotation(Math.atan(t.y / t.x));
 			transform.concatenate(transform2);
-			g.setTransform(transform);
-			
-			g.drawImage(SpriteManager.getInstance().getPlaneImage(t.team), 0, 0, null);
+			g.setTransform(transform);*/
+			if(t.dx == 0) {
+				g.drawImage(SpriteManager.getInstance().getPlaneImage(t.team, 0), (int) t.x, (int) t.y, null);
+			}
+			else
+				g.drawImage(SpriteManager.getInstance().getPlaneImage(t.team, (float) Math.atan2(((float) t.dy), ((float) t.dx))), (int) t.x, (int) t.y, null);
 		}
-		g.setTransform(save_transform);
+		//g.setTransform(save_transform);
 		
 		// TODO draw the hud
 		g.drawImage(SpriteManager.getInstance().hud, 0, height - SpriteManager.getInstance().hud.getHeight(null), null); 

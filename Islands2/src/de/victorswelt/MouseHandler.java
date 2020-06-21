@@ -63,6 +63,10 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
 		handlers.add(m);
 	}
 	
+	public void remove_interface(MouseInterface m) {
+		handlers.remove(m);
+	}
+	
 	// SINGLETON stuff
 	private static MouseHandler INSTANCE;
 	public static void init() {INSTANCE = new MouseHandler();}

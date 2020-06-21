@@ -2,7 +2,9 @@ package de.victorswelt;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -16,6 +18,8 @@ public class SpriteManager {
 	public static final int TRANSPORT_HEIGHT = 16;
 	
 	private static final Color ISLAND_COLOR_KEY = new Color(255,0,255);
+	
+	private static final int PLANE_ROTATIONS = 90;
 	
 	private static final Color islandColours[] = {
 		new Color(255, 0, 0),
@@ -31,7 +35,7 @@ public class SpriteManager {
 	
 	ColourReplacementFilter replacementFilter;
 	Image islandMapIcons[];
-	Image planeIcons[];
+	Image planeIcons[][];
 	Image logo, hud, obstacle;
 	
 	private SpriteManager() throws IOException {
@@ -43,12 +47,20 @@ public class SpriteManager {
 		
 		// initialize the arrays
 		islandMapIcons = new Image[islandColours.length];
-		planeIcons     = new Image[islandColours.length];
+		planeIcons     = new Image[PLANE_ROTATIONS][islandColours.length];
 		
 		// create the individual images
 		for(int i = 0; i<islandColours.length;i++) {
 			islandMapIcons[i] = replaceColourInImage(island_map_icon, ISLAND_COLOR_KEY, islandColours[i]);
-			planeIcons[i]     = replaceColourInImage(plane_icon     , ISLAND_COLOR_KEY, islandColours[i]);
+			planeIcons[0][i]     = replaceColourInImage(plane_icon     , ISLAND_COLOR_KEY, islandColours[i]);
+		}
+		
+		// rotate every image
+		double plane_rotation_step = (Math.PI * 2) / PLANE_ROTATIONS;
+		for(int i = 0; i<islandColours.length;i++) {
+			for(int j = 1; j<PLANE_ROTATIONS; j++) {
+				planeIcons[j][i] = rotateImage(planeIcons[0][i], j*plane_rotation_step);
+			}
 		}
 		
 		// load the hud
@@ -63,10 +75,12 @@ public class SpriteManager {
 		return islandMapIcons[team];
 	}
 	
-	public Image getPlaneImage(int team) {
+	public Image getPlaneImage(int team, float rotation) {
+		int index = (int) Math.min((((Math.abs(rotation) % Math.PI * 2) / Math.PI * 2) * (PLANE_ROTATIONS)), PLANE_ROTATIONS-1);
+		
 		if(team<0 || team > islandColours.length-1)
-			return planeIcons[0];
-		return planeIcons[team];
+			return planeIcons[index][0];
+		return planeIcons[index][team];
 	}
 	
 	private Image replaceColourInImage(Image i, Color original, Color replacement) {
@@ -78,6 +92,33 @@ public class SpriteManager {
 		g.drawImage(img, 0, 0, null);
 		g.dispose();
 		return newImg;
+	}
+	
+	// a function for rotating images
+	private BufferedImage rotateImage(Image img, double rad) {
+		
+		// get the values
+		//double rad = Math.toRadians(degress);
+		double sin = Math.abs(Math.sin(rad));
+		double cos = Math.abs(Math.cos(rad));
+		int width = img.getWidth(null);
+		int height= img.getHeight(null);
+		int nw = (int) Math.floor(width * cos + height * sin);
+		int nh = (int) Math.floor(height * cos + width * sin);
+		
+		// create the new image
+		BufferedImage new_img = new BufferedImage(nw,nh, BufferedImage.TYPE_4BYTE_ABGR);
+		Graphics2D g = new_img.createGraphics();
+		AffineTransform t = new AffineTransform();
+		t.translate((nw-width)/2, (nh-height)/2);
+		t.rotate(rad, width/2, height/2);
+		g.setTransform(t);
+		g.drawImage(img, 0, 0, null);
+		
+		// clear stuff up
+		g.dispose();
+		
+		return new_img;
 	}
 	
 	// 
