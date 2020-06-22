@@ -3,6 +3,8 @@ package de.victorswelt;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -42,8 +44,8 @@ public class SpriteManager {
 		replacementFilter = new ColourReplacementFilter();
 		
 		// initialize the island images
-		Image island_map_icon = ImageIO.read(Main.class.getResource("sprite/island.png"));
-		Image plane_icon      = ImageIO.read(Main.class.getResource("sprite/plane.png"));
+		Image island_map_icon = createCompatibleImage(ImageIO.read(Main.class.getResource("sprite/island.png")));
+		Image plane_icon      = createCompatibleImage(ImageIO.read(Main.class.getResource("sprite/plane.png")));
 		
 		// initialize the arrays
 		islandMapIcons = new Image[islandColours.length];
@@ -64,9 +66,9 @@ public class SpriteManager {
 		}
 		
 		// load the hud
-		hud = ImageIO.read(Main.class.getResource("sprite/hud.png"));
-		logo = ImageIO.read(Main.class.getResource("sprite/logo.gif"));
-		obstacle = ImageIO.read(Main.class.getResource("sprite/obstacle.png"));
+		hud = createCompatibleImage(ImageIO.read(Main.class.getResource("sprite/hud.png")));
+		logo = createCompatibleImage(ImageIO.read(Main.class.getResource("sprite/logo.gif")));
+		obstacle = createCompatibleImage(ImageIO.read(Main.class.getResource("sprite/obstacle.png")));
 	}
 	
 	public Image getMapIslandImage(int team) {
@@ -83,11 +85,11 @@ public class SpriteManager {
 		return planeIcons[index][team];
 	}
 	
-	private Image replaceColourInImage(Image i, Color original, Color replacement) {
+	private BufferedImage replaceColourInImage(Image i, Color original, Color replacement) {
 		replacementFilter.setOriginalColor(original);
 		replacementFilter.setReplacementColor(replacement);
 		Image img = replacementFilter.processImage(i);
-		Image newImg = new BufferedImage(i.getWidth(null), i.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+		BufferedImage newImg = new BufferedImage(i.getWidth(null), i.getHeight(null), BufferedImage.TYPE_INT_ARGB);
 		Graphics g = newImg.getGraphics();
 		g.drawImage(img, 0, 0, null);
 		g.dispose();
@@ -119,6 +121,25 @@ public class SpriteManager {
 		g.dispose();
 		
 		return new_img;
+	}
+	
+	// a method for creating compatible images
+	private BufferedImage createCompatibleImage(BufferedImage input) {
+		// get the graphics configuration
+		GraphicsConfiguration gc = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
+		
+		// if the image has the correct colour model, return it
+		if(input.getColorModel().equals(gc.getColorModel())) {
+			return input;
+		}
+		
+		// otherwise create a compatible image
+		BufferedImage img = gc.createCompatibleImage(input.getWidth(), input.getHeight(), input.getTransparency());
+		Graphics2D g = img.createGraphics();
+		g.drawImage(input, 0, 0, null);
+		g.dispose();
+		
+		return img;
 	}
 	
 	// 

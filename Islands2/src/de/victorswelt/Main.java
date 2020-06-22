@@ -3,8 +3,11 @@ package de.victorswelt;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
+import java.awt.ImageCapabilities;
 import java.awt.RenderingHints;
+import java.awt.Transparency;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.image.VolatileImage;
@@ -56,7 +59,7 @@ public class Main extends JPanel implements Runnable {
 		state = STATE_INITIALIZING;
 		
 		// initialize the offscreen
-		screen = createVolatileImage(SCREEN_WIDTH, SCREEN_HEIGHT);
+		screen = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().createCompatibleVolatileImage(SCREEN_WIDTH, SCREEN_HEIGHT, Transparency.OPAQUE);
 		
 		// initialize the MouseHandler
 		MouseHandler.init();
@@ -166,7 +169,7 @@ public class Main extends JPanel implements Runnable {
 		do {
 			// if the screen is not initialized or incompatible with the graphics configuration
 			if(screen == null || screen.validate(getGraphicsConfiguration()) == VolatileImage.IMAGE_INCOMPATIBLE)
-				screen = createVolatileImage(SCREEN_WIDTH, SCREEN_HEIGHT);
+				screen =  GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().createCompatibleVolatileImage(SCREEN_WIDTH, SCREEN_HEIGHT, Transparency.OPAQUE);
 			
 			// create a graphics context
 			Graphics2D g = screen.createGraphics();
@@ -213,7 +216,20 @@ public class Main extends JPanel implements Runnable {
 		} while(screen.contentsLost());
 		
 		// draw the screen onto the panel
-		Graphics panel_graphics = getGraphics();
+		Graphics2D panel_graphics = (Graphics2D) getGraphics();
+		
+		// turn off all the fancy drawing stuff
+		panel_graphics.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
+		panel_graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+		panel_graphics.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
+		panel_graphics.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_DISABLE);
+		panel_graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_OFF);
+		panel_graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+		panel_graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
+		panel_graphics.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+		panel_graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+		
+		// draw the screen
 		panel_graphics.drawImage(screen, 0, 0, getWidth(), getHeight(), null);
 		panel_graphics.dispose();
 	}
