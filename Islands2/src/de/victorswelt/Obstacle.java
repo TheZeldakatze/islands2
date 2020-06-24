@@ -1,7 +1,7 @@
 package de.victorswelt;
 
 public class Obstacle {
-	int x, y;
+	public int x, y;
 	
 	public Obstacle(int x, int y) {
 		this.x = x;

@@ -23,8 +23,8 @@ public class Main extends JPanel implements Runnable {
 	public static final int GAME_TICK_LENGTH = 12;
 	public static final int TICKS_PER_SECOND = 1000 / 12;
 	
-	private static final int SCREEN_WIDTH = 640;
-	private static final int SCREEN_HEIGHT = 480;
+	public static final int SCREEN_WIDTH = 640;
+	public static final int SCREEN_HEIGHT = 480;
 	
 	private static final byte STATE_INITIALIZING = -128;
 	private static final byte STATE_CLEANUP = -127;

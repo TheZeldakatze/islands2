@@ -9,9 +9,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 public class Game implements MouseInterface {
-	private static final Color SEA_COLOUR = new Color(0, 113, 188);
+	public static final Color SEA_COLOUR = new Color(0, 113, 188);
 	
-	private static final Font FONT_POPULATION_INFO = new Font(Font.MONOSPACED, Font.PLAIN, 10);
+	public static final Font FONT_POPULATION_INFO = new Font(Font.MONOSPACED, Font.PLAIN, 10);
 	
 	Level level;
 	Attack playerAttack;

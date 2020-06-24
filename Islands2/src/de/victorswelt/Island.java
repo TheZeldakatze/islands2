@@ -1,7 +1,7 @@
 package de.victorswelt;
 
 public class Island {
-	int x, y, team, population, ticks_to_next_second;
+	public int x, y, team, population, ticks_to_next_second;
 	
 	public Island(int nx, int ny, int nteam, int npopulation) {
 		x = nx;

@@ -36,9 +36,9 @@ public class SpriteManager {
 	};
 	
 	ColourReplacementFilter replacementFilter;
-	Image islandMapIcons[];
+	public Image islandMapIcons[];
 	Image planeIcons[][];
-	Image logo, hud, obstacle;
+	public Image logo, hud, obstacle;
 	
 	private SpriteManager() throws IOException {
 		replacementFilter = new ColourReplacementFilter();
