@@ -108,8 +108,11 @@ public class SpriteManager {
 		int nw = (int) Math.floor(width * cos + height * sin);
 		int nh = (int) Math.floor(height * cos + width * sin);
 		
+		// get the graphics configuration
+		GraphicsConfiguration gc = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
+		
 		// create the new image
-		BufferedImage new_img = new BufferedImage(nw,nh, BufferedImage.TYPE_4BYTE_ABGR);
+		BufferedImage new_img = gc.createCompatibleImage(nw, nh, BufferedImage.BITMASK);
 		Graphics2D g = new_img.createGraphics();
 		AffineTransform t = new AffineTransform();
 		t.translate((nw-width)/2, (nh-height)/2);

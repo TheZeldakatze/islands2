@@ -121,7 +121,9 @@ public class Game implements MouseInterface {
 		//g.setTransform(save_transform);
 		
 		// TODO draw the hud
-		g.drawImage(SpriteManager.getInstance().hud, 0, height - SpriteManager.getInstance().hud.getHeight(null), null); 
+		g.setColor(Color.GREEN);
+		g.fillRect(0, height-20, width, 20);
+		//g.drawImage(SpriteManager.getInstance().hud, 0, height - SpriteManager.getInstance().hud.getHeight(null), null); 
 		
 	}
 

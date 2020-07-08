@@ -135,7 +135,7 @@ public class LevelMenu {
 		// reset the menu
 		pages[current_page].setEnabled(false);
 		current_page = 0;
-		pages[current_page].setEnabled(false);
+		pages[current_page].setEnabled(b);
 		enabled = b;
 	}
 }
