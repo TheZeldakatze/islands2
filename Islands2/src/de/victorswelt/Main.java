@@ -143,7 +143,15 @@ public class Main extends JPanel implements Runnable {
 			
 			case STATE_LEVEL_MENU: {
 				switch(level_menu.update()) {
-					case 0:
+					case LevelMenu.RESPONSE_IDLE:
+						break;
+					
+					case LevelMenu.RESPONSE_BACK_TO_MAIN_MENU:
+						state = STATE_MAIN_MENU;
+						level_menu.setEnabled(false);
+						break;
+						
+					case LevelMenu.RESPONSE_LEVEL_SELECTED:
 						state = STATE_GAME;
 						level_menu.setEnabled(false);
 						break;

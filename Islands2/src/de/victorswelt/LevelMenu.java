@@ -7,6 +7,10 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 public class LevelMenu {
+	public static final int RESPONSE_IDLE = -1;
+	public static final int RESPONSE_LEVEL_SELECTED = 0;
+	public static final int RESPONSE_BACK_TO_MAIN_MENU = 1;
+	
 	private static final int LEVELS_PER_PAGE = 5;
 	
 	private Game game;
@@ -14,7 +18,7 @@ public class LevelMenu {
 	private LevelPage pages[];
 	private int current_page;
 	
-	private Button previous_page, next_page;
+	private Button previous_page, next_page, back;
 	
 	public LevelMenu(Game g) {
 		game = g;
@@ -22,6 +26,7 @@ public class LevelMenu {
 		// initialize the navigation buttons
 		previous_page = new Button("Previous Page", 30, 400, 100, 30);
 		next_page     = new Button("Next Page", 500, 400, 100, 30);
+		back          = new Button("Back", 10, 10, 50, 20);
 		
 		// load the level list
 		String list_string = "";
@@ -77,6 +82,11 @@ public class LevelMenu {
 			setEnabled(true);
 		
 		// check if a navigation button was pressed
+		if(back.wasPressed) {
+			back.wasPressed = false;
+			return RESPONSE_BACK_TO_MAIN_MENU;
+		}
+		
 		if(next_page.wasPressed) {
 			// reset it
 			next_page.wasPressed = false;
@@ -110,9 +120,9 @@ public class LevelMenu {
 		
 		switch(pages[current_page].update()) {
 			case LevelPage.UPDATE_DEFAULT:
-				return -1;
+				return RESPONSE_IDLE;
 			case LevelPage.UPDATE_LEVEL_SELECTED: {
-				return 0;
+				return RESPONSE_LEVEL_SELECTED;
 			}
 		}
 		
@@ -127,6 +137,7 @@ public class LevelMenu {
 		// draw the navigation
 		previous_page.render(g);
 		next_page.render(g);
+		back.render(g);
 		
 		// draw the index
 		g.drawString("Page: " + (current_page + 1) + " / " + pages.length, 300, 420);
@@ -136,7 +147,7 @@ public class LevelMenu {
 	public void setEnabled(boolean b) {
 		previous_page.setEnabled(b);
 		next_page.setEnabled(b);
-		System.out.println(b);
+		back.setEnabled(b);
 		
 		// reset the menu
 		pages[current_page].setEnabled(false);
