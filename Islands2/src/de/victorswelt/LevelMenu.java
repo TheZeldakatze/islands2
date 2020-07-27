@@ -52,7 +52,8 @@ public class LevelMenu {
 		}
 		
 		// create the pages
-		pages = new LevelPage[(int) (Math.floor(buttons.size() / LEVELS_PER_PAGE) + 1)];
+		pages = new LevelPage[(int) Math.ceil(buttons.size() * 1.0 / LEVELS_PER_PAGE)];
+		
 		
 		for(int p = 0; p<pages.length; p++) {
 			
@@ -70,6 +71,10 @@ public class LevelMenu {
 	}
 	
 	public int update() {
+		
+		// if the menu is disabled, re-enable it
+		if(!enabled)
+			setEnabled(true);
 		
 		// check if a navigation button was pressed
 		if(next_page.wasPressed) {
@@ -131,6 +136,7 @@ public class LevelMenu {
 	public void setEnabled(boolean b) {
 		previous_page.setEnabled(b);
 		next_page.setEnabled(b);
+		System.out.println(b);
 		
 		// reset the menu
 		pages[current_page].setEnabled(false);

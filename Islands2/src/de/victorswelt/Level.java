@@ -54,7 +54,7 @@ public class Level {
 				return false;
 		}
 		
-		// check if the player any any ongoing transports
+		// check if the player has any any ongoing transports
 		for(int i = 0; i<transports.size(); i++) {
 			if(((Transport) transports.get(i)).team == playerTeam)
 				return false;
