@@ -1,6 +1,11 @@
 package de.victorswelt;
 
+import java.awt.Font;
+
 public class Utils {
+	public static Font FONT_HEADER  = new Font(Font.SANS_SERIF, Font.BOLD, 24),
+					   FONT_DEFAULT = new Font(Font.SANS_SERIF, Font.PLAIN, 14);
+	
 	private Utils() {}
 	
 	

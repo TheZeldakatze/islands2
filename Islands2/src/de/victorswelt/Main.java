@@ -27,9 +27,10 @@ public class Main extends JPanel implements Runnable {
 	private static final byte STATE_INITIALIZING = -128;
 	private static final byte STATE_CLEANUP = -127;
 	
-	private static final byte STATE_MAIN_MENU    = 0;
-	private static final byte STATE_LEVEL_MENU   = 1;
-	private static final byte STATE_GAME         = 2;
+	private static final byte STATE_MAIN_MENU        = 0;
+	private static final byte STATE_LEVEL_MENU       = 1;
+	private static final byte STATE_GAME             = 2;
+	private static final byte STATE_MP_SERVER_SELECT = 3; // MP = Multiplayer
 	
 	VolatileImage screen;
 	Image loading_banner;
@@ -38,6 +39,7 @@ public class Main extends JPanel implements Runnable {
 	Game game;
 	MainMenu main_menu;
 	LevelMenu level_menu;
+	ServerSelectMenu server_select_menu;
 	
 	public static void main(String[] args) {
 		JFrame frame = new JFrame();
@@ -106,6 +108,7 @@ public class Main extends JPanel implements Runnable {
 		
 		level_menu = new LevelMenu(game);
 		main_menu = new MainMenu();
+		server_select_menu = new ServerSelectMenu();
 		
 		// when the initialization is finished, change the state to the cleanup one
 		state = STATE_CLEANUP;
@@ -145,6 +148,9 @@ public class Main extends JPanel implements Runnable {
 						state = STATE_LEVEL_MENU;
 						main_menu.setEnabled(false);
 						break;
+					case 1:
+						state = STATE_MP_SERVER_SELECT;
+						main_menu.setEnabled(false);
 				};
 				break;
 			}
@@ -175,6 +181,22 @@ public class Main extends JPanel implements Runnable {
 				
 				break;
 			}
+			
+			case STATE_MP_SERVER_SELECT: {
+				switch(server_select_menu.update()) {
+					case ServerSelectMenu.RESPONSE_IDLE:
+						break;
+					case ServerSelectMenu.RESPONSE_BACK_TO_MAIN_MENU:
+						state = STATE_MAIN_MENU;
+						server_select_menu.setEnabled(false);
+						break;
+					case ServerSelectMenu.RESPONSE_LEVEL_SELECTED:
+						// TODO do the multiplayer stuff
+						break;
+				}
+					
+				break;
+			}
 		}
 	}
 	
@@ -198,6 +220,7 @@ public class Main extends JPanel implements Runnable {
 			g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
 			g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
 			g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+			g.setFont(Utils.FONT_DEFAULT);
 			
 			switch(state) {
 				case STATE_INITIALIZING: {
@@ -223,6 +246,12 @@ public class Main extends JPanel implements Runnable {
 				
 				case STATE_GAME: {
 					game.render(g, SCREEN_WIDTH, SCREEN_HEIGHT);
+					break;
+				}
+				
+				case STATE_MP_SERVER_SELECT: {
+					server_select_menu.render(g, SCREEN_WIDTH, SCREEN_HEIGHT);
+					break;
 				}
 				
 			}

@@ -7,6 +7,7 @@ public class MainMenu {
 	private boolean enabled;
 	private Button buttons[] = {
 			new Button("Play!", 230, 150, 180, 40),
+			new Button("Multiplayer", 230, 200, 180, 40)
 	};
 	
 	TextField test = new TextField(220, 400, 200, 30);
