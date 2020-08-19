@@ -45,7 +45,7 @@ public class ServerSelectMenu {
 		g.setFont(Utils.FONT_HEADER);
 		FontMetrics fm = g.getFontMetrics();
 		g.setColor(Color.WHITE);
-		g.drawString(TITLE, width / 2 - fm.stringWidth(TITLE) / 2, 100);
+		g.drawString(TITLE, width / 2 - fm.stringWidth(TITLE) / 2, 50);
 	}
 	
 	public void setEnabled(boolean b) {

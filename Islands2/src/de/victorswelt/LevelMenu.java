@@ -1,12 +1,15 @@
 package de.victorswelt;
 
 import java.awt.Color;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
 public class LevelMenu {
+	private static final String TITLE = "Select Level";
+	
 	public static final int RESPONSE_IDLE = -1;
 	public static final int RESPONSE_LEVEL_SELECTED = 0;
 	public static final int RESPONSE_BACK_TO_MAIN_MENU = 1;
@@ -47,7 +50,7 @@ public class LevelMenu {
 			String split[] = lines[l].split(" ", 2);
 			
 			if(split.length == 2) {
-				buttons.add(new LevelButton(split[1], 160, (l % LEVELS_PER_PAGE) * 40 + 30, 320, 30, split[0]));
+				buttons.add(new LevelButton(split[1], 160, (l % LEVELS_PER_PAGE) * 40 + 100, 320, 30, split[0]));
 			}
 			else
 				System.out.println("Could not parse entry in LevelList.lst! line: " + l + " (invalid length: " + split.length + ")");
@@ -139,6 +142,11 @@ public class LevelMenu {
 		// draw the index
 		g.drawString("Page: " + (current_page + 1) + " / " + pages.length, 300, 420);
 		
+		// draw the title
+		g.setFont(Utils.FONT_HEADER);
+		FontMetrics fm = g.getFontMetrics();
+		g.setColor(Color.WHITE);
+		g.drawString(TITLE, width / 2 - fm.stringWidth(TITLE) / 2, 50);
 	}
 	
 	public void setEnabled(boolean b) {
