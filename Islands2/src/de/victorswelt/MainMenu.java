@@ -10,8 +10,6 @@ public class MainMenu {
 			new Button("Multiplayer", 230, 200, 180, 40)
 	};
 	
-	TextField test = new TextField(220, 400, 200, 30);
-	
 	public int update() {
 		
 		// if the menu is disabled, enable it
@@ -36,8 +34,6 @@ public class MainMenu {
 		// draw every button
 		for(int i = 0; i<buttons.length; i++)
 			buttons[i].render(g);
-		
-		test.render(g);
 	}
 	
 	public void setEnabled(boolean b) {
@@ -45,6 +41,5 @@ public class MainMenu {
 		for(int i = 0; i<buttons.length; i++) {
 			buttons[i].setEnabled(b);
 		}
-		test.setEnabled(b);
 	}
 }
