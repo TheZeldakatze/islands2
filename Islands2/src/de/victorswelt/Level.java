@@ -119,8 +119,8 @@ public class Level {
 			
 			// get the angle
 			float angle = (float) (Math.atan((float) delta_y / delta_x) - Math.PI/2);
-			float sin = (float) Math.sin(angle);
-			float cos = (float) Math.cos(angle);
+			float sin = (float) FastMath.sin(angle);
+			float cos = (float) FastMath.cos(angle);
 			
 			// a matrix calculation. it´s a simplified version of:
 			// dx = x * cos - y * sin

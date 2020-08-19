@@ -3,8 +3,9 @@ package de.victorswelt;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 
-public class Button implements MouseInterface {
+public class Button extends UIComponent implements MouseInterface {
 	String text;
 	int x,y,width,height;
 	boolean enabled = true, selected, wasPressed;
@@ -24,7 +25,7 @@ public class Button implements MouseInterface {
 		wasPressed = false;
 	}
 	
-	public void render(Graphics g) {
+	public void render(Graphics2D g) {
 		if(selected)
 			g.setColor(Color.LIGHT_GRAY);
 		else

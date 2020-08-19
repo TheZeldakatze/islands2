@@ -67,6 +67,12 @@ public class Main extends JPanel implements Runnable {
 		addMouseMotionListener(MouseHandler.getInstance());
 		MouseHandler.getInstance().setWindowSize(getWidth(), getHeight());
 		MouseHandler.getInstance().setCanvasSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+		
+		// initialize the KeyboardHandler
+		KeyboardHandler.init();
+		addKeyListener(KeyboardHandler.getInstance());
+		requestFocusInWindow();
+		
 		addComponentListener(new ComponentListener() {
 			public void componentShown(ComponentEvent e) {}
 			
@@ -89,6 +95,9 @@ public class Main extends JPanel implements Runnable {
 		// start the game thread
 		new Thread(this, "GameThread").start();
 		
+		// initialize the FastMath library
+		FastMath.init();
+		
 		try {
 			SpriteManager.init();
 			game = new Game();
@@ -96,6 +105,7 @@ public class Main extends JPanel implements Runnable {
 			
 			e.printStackTrace();
 		}
+		
 		level_menu = new LevelMenu(game);
 		main_menu = new MainMenu();
 		
