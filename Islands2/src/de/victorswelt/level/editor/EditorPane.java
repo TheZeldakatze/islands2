@@ -23,6 +23,8 @@ import de.victorswelt.SpriteManager;
 import de.victorswelt.Utils;
 
 public class EditorPane extends JPanel implements MouseInterface, Runnable {
+	private static final long serialVersionUID = 1L;
+
 	private static final Color transparent = new Color(255, 255, 255, 100);
 	
 	static final int TOOL_ISLAND = 0;

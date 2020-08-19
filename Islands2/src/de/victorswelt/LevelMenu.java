@@ -13,7 +13,6 @@ public class LevelMenu {
 	
 	private static final int LEVELS_PER_PAGE = 5;
 	
-	private Game game;
 	private boolean enabled = false;
 	private LevelPage pages[];
 	private int current_page;
@@ -21,8 +20,6 @@ public class LevelMenu {
 	private Button previous_page, next_page, back;
 	
 	public LevelMenu(Game g) {
-		game = g;
-		
 		// initialize the navigation buttons
 		previous_page = new Button("Previous Page", 30, 400, 100, 30);
 		next_page     = new Button("Next Page", 500, 400, 100, 30);

@@ -5,6 +5,8 @@ import java.awt.event.KeyEvent;
 import javax.swing.JTextField;
 
 public class JNumberTextField extends JTextField {
+	private static final long serialVersionUID = 1L;
+
 	public void processKeyEvent(KeyEvent e) {
 		char c = e.getKeyChar();
 		if(Character.isDigit(c) || c == KeyEvent.VK_BACK_SPACE)

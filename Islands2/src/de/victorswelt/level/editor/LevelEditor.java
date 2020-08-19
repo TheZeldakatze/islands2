@@ -23,6 +23,8 @@ import javax.swing.text.NumberFormatter;
 import de.victorswelt.SpriteManager;
 
 public class LevelEditor extends JFrame {
+	private static final long serialVersionUID = 1L;
+	
 	EditorPane editor_pane;
 	
 	public static void main(String[] args) {
