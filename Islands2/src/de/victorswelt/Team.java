@@ -10,7 +10,7 @@ public class Team {
 		return id;
 	}
 	
-	public void update(Level l) {
+	public void update(LevelAbstract l) {
 		
 	}
 }

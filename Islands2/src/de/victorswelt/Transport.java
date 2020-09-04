@@ -8,7 +8,7 @@ public class Transport {
 	float x,y,dx,dy;
 	int size,team;
 	
-	public Transport(Level l, int nx, int ny, float ndx, float ndy, int nteam, int nsize, Island ntarget) {
+	public Transport(LevelAbstract l, int nx, int ny, float ndx, float ndy, int nteam, int nsize, Island ntarget) {
 		target = ntarget;
 		x = nx;
 		y = ny;

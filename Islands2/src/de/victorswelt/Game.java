@@ -13,7 +13,7 @@ public class Game implements MouseInterface {
 	
 	public static final Font FONT_POPULATION_INFO = new Font(Font.MONOSPACED, Font.PLAIN, 10);
 	
-	Level level;
+	LevelAbstract level;
 	Attack playerAttack;
 	AffineTransform transform, transform2;
 	
@@ -55,7 +55,7 @@ public class Game implements MouseInterface {
 		return level.isGameOver();
 	}
 	
-	public void setLevel(Level l) {
+	public void setLevel(LevelAbstract l) {
 		level = l;
 	}
 	

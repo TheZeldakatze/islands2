@@ -2,12 +2,7 @@ package de.victorswelt;
 
 import java.util.ArrayList;
 
-public class Level {
-	int playerTeam;
-	private Island islands[];
-	private Obstacle obstacles[];
-	private transient ArrayList transports;
-	private transient ArrayList teams;
+public class Level extends LevelAbstract {
 	
 	public Level(Island nislands[], Obstacle o[]) {
 		playerTeam = 0;

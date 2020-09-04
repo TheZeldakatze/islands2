@@ -192,6 +192,12 @@ public class Main extends JPanel implements Runnable {
 						break;
 					case ServerSelectMenu.RESPONSE_LEVEL_SELECTED:
 						// TODO do the multiplayer stuff
+						
+						// create a multiplayer level
+						MultiplayerLevel ml = new MultiplayerLevel(null);
+						game.setLevel(ml);
+						state = STATE_GAME;
+						
 						break;
 				}
 					
