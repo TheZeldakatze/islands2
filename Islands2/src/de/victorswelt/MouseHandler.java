@@ -10,7 +10,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
 	ArrayList handlers;
 	
 	private MouseHandler() {
-		handlers = new ArrayList(1);
+		handlers = new ArrayList();
 	}
 	
 	public void mouseDragged(MouseEvent e) {}
