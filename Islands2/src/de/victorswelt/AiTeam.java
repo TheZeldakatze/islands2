@@ -5,7 +5,7 @@ public class AiTeam extends Team {
 	
 	public AiTeam(int nid) {super(nid);}
 	
-	public void update(Level l) {
+	public void update(LevelAbstract l) {
 		ticks_to_next_second--;
 		if(ticks_to_next_second <= 0) {
 			ticks_to_next_second = (int) (Main.TICKS_PER_SECOND * 5);
