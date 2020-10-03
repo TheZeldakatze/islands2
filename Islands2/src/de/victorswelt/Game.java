@@ -120,9 +120,17 @@ public class Game implements MouseInterface {
 		}
 		//g.setTransform(save_transform);
 		
-		// TODO draw the hud
+		// draw the hud
 		g.setColor(Color.GREEN);
 		g.fillRect(0, height-20, width, 20);
+		
+		// draw the player's team indicator
+		g.setColor(Color.BLACK);
+		g.drawRect(width - 15, height - 15, 10, 10);
+		g.drawString("Your colour:", width - 90, height - 5);
+		g.setColor(SpriteManager.getInstance().getTeamColor(level.playerTeam));
+		g.fillRect(width - 14, height - 14, 9, 9);
+		
 		//g.drawImage(SpriteManager.getInstance().hud, 0, height - SpriteManager.getInstance().hud.getHeight(null), null); 
 		
 	}

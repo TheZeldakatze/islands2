@@ -77,6 +77,12 @@ public class SpriteManager {
 		return islandMapIcons[team];
 	}
 	
+	public Color getTeamColor(int team) {
+		if(team<0 || team > islandColours.length-1)
+			return islandColours[0];
+		return islandColours[team];
+	}
+	
 	public Image getPlaneImage(int team, float rotation) {
 		int index = (int) Math.min((((Math.abs(rotation) % Math.PI * 2) / Math.PI * 2) * (PLANE_ROTATIONS)), PLANE_ROTATIONS-1);
 		
