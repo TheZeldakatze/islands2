@@ -10,6 +10,9 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.image.VolatileImage;
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.SocketAddress;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
@@ -26,11 +29,14 @@ public class Main extends JPanel implements Runnable {
 	
 	private static final byte STATE_INITIALIZING = -128;
 	private static final byte STATE_CLEANUP = -127;
+	private static final byte STATE_ERROR_MESSAGE        = -126;
 	
-	private static final byte STATE_MAIN_MENU        = 0;
-	private static final byte STATE_LEVEL_MENU       = 1;
-	private static final byte STATE_GAME             = 2;
-	private static final byte STATE_MP_SERVER_SELECT = 3; // MP = Multiplayer
+	private static final byte STATE_MAIN_MENU            = 0;
+	private static final byte STATE_LEVEL_MENU           = 1;
+	private static final byte STATE_GAME                 = 2;
+	private static final byte STATE_MP_SERVER_SELECT     = 3; // MP = Multiplayer
+	private static final byte STATE_MP_SERVER_CONNECTING = 4;
+	private static final byte STATE_MP_SERVER_GAME       = 5;
 	
 	VolatileImage screen;
 	Image loading_banner;
@@ -40,6 +46,8 @@ public class Main extends JPanel implements Runnable {
 	MainMenu main_menu;
 	LevelMenu level_menu;
 	ServerSelectMenu server_select_menu;
+	MultiplayerConnectionWindow multiplayer_connection_window;
+	ErrorWindow error_window;
 	
 	public static void main(String[] args) {
 		JFrame frame = new JFrame();
@@ -109,9 +117,15 @@ public class Main extends JPanel implements Runnable {
 		level_menu = new LevelMenu(game);
 		main_menu = new MainMenu();
 		server_select_menu = new ServerSelectMenu();
+		multiplayer_connection_window = new MultiplayerConnectionWindow();
+		error_window = new ErrorWindow();
 		
 		// when the initialization is finished, change the state to the cleanup one
 		state = STATE_CLEANUP;
+		
+		// show an info message
+		error_window.setup("Note: this is a test build", STATE_MAIN_MENU);
+		state = STATE_ERROR_MESSAGE;
 	}
 
 	public void run() {
@@ -141,6 +155,13 @@ public class Main extends JPanel implements Runnable {
 				state = STATE_MAIN_MENU;
 				break;
 			}
+			
+			case STATE_ERROR_MESSAGE: {
+				if(error_window.update()) {
+					error_window.setEnabled(false);
+					state = error_window.getReturnState();
+				}
+			} break;
 			
 			case STATE_MAIN_MENU: {
 				switch(main_menu.update()) {
@@ -191,18 +212,53 @@ public class Main extends JPanel implements Runnable {
 						server_select_menu.setEnabled(false);
 						break;
 					case ServerSelectMenu.RESPONSE_LEVEL_SELECTED:
+						server_select_menu.setEnabled(false);
+						
+						// create a socket address
+						InetSocketAddress socketAddress = null;
+						try {
+							String addr = server_select_menu.ip_field.text;
+							if(addr == null || addr.isEmpty())
+								break;
+							
+							multiplayer_connection_window.address = addr;
+							String split[] = addr.split(":", 2);
+							if(split.length == 1) {
+								socketAddress = InetSocketAddress.createUnresolved(split[0], 53456);
+							}
+							else
+								socketAddress = InetSocketAddress.createUnresolved(split[0], Integer.parseInt(split[1]));
+						} catch(Exception e) {
+							e.printStackTrace();
+							break;
+						}
+						
 						// TODO do the multiplayer stuff
 						
 						// create a multiplayer level
-						MultiplayerLevel ml = new MultiplayerLevel(null);
+						System.out.println(socketAddress);
+						MultiplayerLevel ml = new MultiplayerLevel(socketAddress);
 						game.setLevel(ml);
-						state = STATE_GAME;
-						
+						state = STATE_MP_SERVER_CONNECTING;
 						break;
 				}
 					
 				break;
 			}
+			
+			case STATE_MP_SERVER_CONNECTING: {
+				MultiplayerLevel level = (MultiplayerLevel) game.getLevel();
+				if(!level.isLoading()) {
+					multiplayer_connection_window.setEnabled(false);
+					state = STATE_MP_SERVER_GAME;
+					break;
+				}
+				
+				if(multiplayer_connection_window.update()) {
+					multiplayer_connection_window.setEnabled(false);
+					state = STATE_MP_SERVER_SELECT;
+				}
+			} break;
 		}
 	}
 	
@@ -240,6 +296,10 @@ public class Main extends JPanel implements Runnable {
 					break;
 				}
 				
+				case STATE_ERROR_MESSAGE: {
+					error_window.render(g, SCREEN_WIDTH, SCREEN_HEIGHT);
+				} break;
+				
 				case STATE_MAIN_MENU: {
 					main_menu.render(g, SCREEN_WIDTH, SCREEN_HEIGHT);
 					break;
@@ -260,6 +320,13 @@ public class Main extends JPanel implements Runnable {
 					break;
 				}
 				
+				case STATE_MP_SERVER_CONNECTING: {
+					multiplayer_connection_window.render(g, SCREEN_WIDTH, SCREEN_HEIGHT);
+				} break;
+				
+				case STATE_MP_SERVER_GAME: {
+					game.render(g, SCREEN_WIDTH, SCREEN_HEIGHT);
+				} break;
 			}
 			
 			// dispose the graphics object

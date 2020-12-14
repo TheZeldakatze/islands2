@@ -59,6 +59,10 @@ public class Game implements MouseInterface {
 		level = l;
 	}
 	
+	public LevelAbstract getLevel() {
+		return level;
+	}
+	
 	public void render(Graphics2D g, int width, int height) {
 		
 		// draw the background

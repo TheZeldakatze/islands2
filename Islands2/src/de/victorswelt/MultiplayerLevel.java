@@ -1,12 +1,20 @@
 package de.victorswelt;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 public class MultiplayerLevel extends LevelAbstract {
+	private boolean loading = true, gameover, listenerRunning = true;
+	private Socket socket;
+	private DataInputStream data_in;
+	private DataOutputStream data_out;
 	
-	
-	public MultiplayerLevel(Socket s) {
+	public MultiplayerLevel(final InetSocketAddress s) {
 		playerTeam = 0;
 		transports = new ArrayList();
 		teams = new ArrayList();
@@ -14,19 +22,24 @@ public class MultiplayerLevel extends LevelAbstract {
 		Obstacle obs[] = {};
 		obstacles = obs;
 		
-		Island isl[] = {
-				new Island(5, 5, 0, 21),
-				new Island(115, 115, 1, 21),
-		};
+		Island isl[] = {};
 		islands = isl;
+		
+		// create a listener thread
+		new Thread(new Runnable() {
+			public void run() {
+				networkListenerThread(s);
+			}
+		}, "Multiplayer Connection Thread").start();
+		
 	}
 	
 	public boolean isLoading() {
-		return false;
+		return loading;
 	}
 
 	public boolean isGameOver() {
-		return false;
+		return gameover;
 	}
 	
 	public Island[] getIslands() {
@@ -35,6 +48,10 @@ public class MultiplayerLevel extends LevelAbstract {
 	
 	public ArrayList getTransports() {
 		return transports;
+	}
+	
+	public void disconnect() {
+		
 	}
 	
 	public Obstacle[] getObstacles() {
@@ -71,39 +88,47 @@ public class MultiplayerLevel extends LevelAbstract {
 		}	
 	}
 	
+	private void networkListenerThread(InetSocketAddress networkAddress) {
+		// initialize
+		// create a socket
+		try {
+			System.out.println("connecting!");
+			// create a socket
+			socket = new Socket(networkAddress.getHostString(), networkAddress.getPort());
+			data_in  = new DataInputStream(socket.getInputStream());
+			data_out = new DataOutputStream(socket.getOutputStream());
+			System.out.println("connected!");
+			
+			// end the loading phase
+			loading = false;
+			
+			// read a var int
+			// TODO remove
+			System.out.println("VarInt content: " + Utils.decodeVarNum(data_in));
+			System.out.println("VarInt content: " + Utils.decodeVarNum(data_in));
+			System.out.println("VarInt content: " + Utils.decodeVarNum(data_in));
+			System.out.println("VarInt content: " + Utils.decodeVarNum(data_in));
+			
+			
+			// listen
+			while(true) {
+				
+			}
+			
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
 	/**
 	 * the method creates a troop transport
 	 **/
 	public void addTransport(int source, int target) {
-		Island source_island = getIsland(source), target_island = getIsland(target);
 		
-		if(source_island != null && target_island != null) {
-			int delta_x = target_island.x-source_island.x;
-			int delta_y = target_island.y-source_island.y;
-			
-			// get the angle
-			float angle = (float) (Math.atan((float) delta_y / delta_x) - Math.PI/2);
-			float sin = (float) FastMath.sin(angle);
-			float cos = (float) FastMath.cos(angle);
-			
-			// a matrix calculation. it´s a simplified version of:
-			// dx = x * cos - y * sin
-			// dy = x * sin + y * cos
-			float dx = -Transport.TRANSPORT_SPEED*sin;
-			float dy = Transport.TRANSPORT_SPEED *cos;
-			
-			// FIX for some reason, the values are flipped when delta_x is negative
-			if(delta_x<0) {
-				dx=-dx;
-				dy=-dy;
-			}
-			
-			// calculate the size of the transport
-			int size = source_island.population/2;
-			source_island.population-=size;
-			
-			// create it
-			transports.add(new Transport(this, source_island.x, source_island.y, dx, dy, source_island.team, size, target_island));
-		}
 	}
 }
