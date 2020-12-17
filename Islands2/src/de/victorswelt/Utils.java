@@ -61,4 +61,10 @@ public class Utils {
 			number >>>= 7;
 		}
 	}
+	
+	public static void createPacket(DataOutputStream dos, byte packetType, String content) throws NumberFormatException, IOException {
+		dos.writeByte(packetType);
+		Utils.encodeVarInt(dos, content.length());
+		dos.writeBytes(content);
+	}
 }

@@ -14,7 +14,6 @@ public class Server implements Runnable {
 	boolean running = true;
 	
 	public static void main(String args[]) {
-		Client.createPacket(PacketType.SERVER_LOGIN_FULL, "         dfsäklgäflödksäglökdflsögflsökdglökfsdälgkäksgäkfksgäfskdgkfsägkädfksägkdfsägädfksgkfsädgkäfsldkgälfsjhklfsjghlsäglfdsälökgäskä älgskäk dfsägkäösk");
 		try {
 			server = new Server();
 		} catch (IOException e) {

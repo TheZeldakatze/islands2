@@ -2,10 +2,12 @@ package de.victorswelt.Server;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
+import de.victorswelt.NetworkPacketReader;
 import de.victorswelt.Utils;
 
 public class Client implements Runnable {
@@ -14,10 +16,12 @@ public class Client implements Runnable {
 	Thread thread;
 	private DataInputStream data_in;
 	private DataOutputStream data_out;
+	private NetworkPacketReader packet;
 	
 	public Client(Server s, Socket sock) {
 		server = s;
 		socket = sock;
+		packet = new NetworkPacketReader();
 		
 		// create a new thread
 		thread = new Thread(this);
@@ -32,13 +36,17 @@ public class Client implements Runnable {
 			data_in  = new DataInputStream(is);
 			data_out = new DataOutputStream(os);
 			
-			Utils.encodeVarInt(data_out, 9);
-			Utils.encodeVarInt(data_out, 257);
-			Utils.encodeVarInt(data_out, 655456);
-			Utils.encodeVarInt(data_out, Integer.MAX_VALUE);
-			
 			while(true) {
+				packet.read(data_in);
 				
+				switch(packet.type) {
+					case PacketType.CLIENT_GET_MAP: {
+						String map = "i 405 151 0 40\ni 39 56 0 40\ni 202 250 0 40\ni 538 240 0 40\ni 342 58 2 40\ni 223 117 2 40\ni 377 244 2 40\ni 531 152 2 40\ni 41 253 2 40\ni 176 24 1 50";
+						System.out.println("[INFO] sending map:"+map.length()+":"+map);
+						Utils.encodeVarInt(data_out, map.length());
+						data_out.writeUTF(map);
+					} break;
+				}
 			}
 		} catch(Exception e) {
 			
@@ -50,19 +58,5 @@ public class Client implements Runnable {
 	
 	public void kick() {
 		
-	}
-	
-	 static byte[] createPacket(byte packetType, String content) {
-		short length = (short) content.length();
-		byte byteLength[] = {
-			((byte) length),
-			((byte) (length << 8)),
-		};
-		
-		short decodedLength = (short) (((short) ((char) byteLength[0])) | ((short) (byteLength[1] >> 8)));
-		
-		System.out.println(length + ";" + ((short) (char) byteLength[0]) + " " + byteLength[1] + ";" + decodedLength);
-		
-		return null;
 	}
 }

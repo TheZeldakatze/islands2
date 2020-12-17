@@ -8,6 +8,8 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
+import de.victorswelt.Server.PacketType;
+
 public class MultiplayerLevel extends LevelAbstract {
 	private boolean loading = true, gameover, listenerRunning = true;
 	private Socket socket;
@@ -88,6 +90,67 @@ public class MultiplayerLevel extends LevelAbstract {
 		}	
 	}
 	
+	private void downloadMap() throws NumberFormatException, IOException {
+		Utils.createPacket(data_out, PacketType.CLIENT_GET_MAP, "");
+		int length = Utils.decodeVarNum(data_in);
+		byte buf[] = new byte[length];
+		data_in.readFully(buf);
+		String text = new String(buf);
+		System.out.println(length + ":" + text);
+		// parse everything
+		// get the lines
+		String lines[] = text.split("\n");
+		
+		// create the islands
+		ArrayList islands = new ArrayList();
+		ArrayList obstacles = new ArrayList();
+		for(int i = 0; i<lines.length; i++) {
+			// split the line
+			String parts[] = lines[i].split(" ");
+			
+			// check if it is an island
+			if(parts[0].equalsIgnoreCase("i")) {
+				// check for the length
+				if(parts.length == 5) {
+					try {
+						int x          = Integer.parseInt(parts[1]);
+						int y          = Integer.parseInt(parts[2]);
+						int team       = Integer.parseInt(parts[3]);
+						int population = Integer.parseInt(parts[4]);
+						
+						islands.add(new Island(x, y, team, population));
+					} catch(Exception e) {
+						System.out.println("Level: malformed line: " + i + " (not a number)");
+					}
+				}
+				else
+					System.out.println("Level: malformed line: " + i + " (invalid length)");
+			}
+			
+			// check if it is an obstacle
+			else if(parts[0].equalsIgnoreCase("o")) {
+				if(parts.length == 3) {
+					try {
+						int x = Integer.parseInt(parts[1]);
+						int y = Integer.parseInt(parts[2]);
+						obstacles.add(new Obstacle(x, y));
+					} catch(Exception e) {
+						System.out.println("Level: malformed line: " + i + " (invalid length)");
+					}
+				}
+			}
+			
+		}
+		
+		// create an array
+		this.islands = new Island[islands.size()];
+		for(int i = 0; i<this.islands.length;i++)
+			this.islands[i] = (Island) islands.get(i);
+		this.obstacles = new Obstacle[obstacles.size()];
+		for(int i = 0; i<this.obstacles.length; i++)
+			this.obstacles[i] = (Obstacle) obstacles.get(i);
+	}
+	
 	private void networkListenerThread(InetSocketAddress networkAddress) {
 		// initialize
 		// create a socket
@@ -99,16 +162,10 @@ public class MultiplayerLevel extends LevelAbstract {
 			data_out = new DataOutputStream(socket.getOutputStream());
 			System.out.println("connected!");
 			
+			downloadMap();
+			
 			// end the loading phase
 			loading = false;
-			
-			// read a var int
-			// TODO remove
-			System.out.println("VarInt content: " + Utils.decodeVarNum(data_in));
-			System.out.println("VarInt content: " + Utils.decodeVarNum(data_in));
-			System.out.println("VarInt content: " + Utils.decodeVarNum(data_in));
-			System.out.println("VarInt content: " + Utils.decodeVarNum(data_in));
-			
 			
 			// listen
 			while(true) {
