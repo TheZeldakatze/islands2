@@ -129,8 +129,6 @@ public class Main extends JPanel implements Runnable {
 		// show an info message
 		error_window.setup("Note: this is a test build", STATE_MAIN_MENU);
 		state = STATE_ERROR_MESSAGE;
-		
-		setFullscreen(true, true);
 	}
 
 	public void run() {
