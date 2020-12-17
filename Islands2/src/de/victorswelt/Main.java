@@ -1,7 +1,9 @@
 package de.victorswelt;
 
 import java.awt.Color;
+import java.awt.DisplayMode;
 import java.awt.Graphics2D;
+import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.RenderingHints;
@@ -37,7 +39,8 @@ public class Main extends JPanel implements Runnable {
 	private static final byte STATE_MP_SERVER_SELECT     = 3; // MP = Multiplayer
 	private static final byte STATE_MP_SERVER_CONNECTING = 4;
 	private static final byte STATE_MP_SERVER_GAME       = 5;
-	
+
+	static JFrame frame;
 	VolatileImage screen;
 	Image loading_banner;
 	int state;
@@ -50,7 +53,7 @@ public class Main extends JPanel implements Runnable {
 	ErrorWindow error_window;
 	
 	public static void main(String[] args) {
-		JFrame frame = new JFrame();
+		frame = new JFrame();
 		Main m = new Main();
 		frame.setSize(640, 480);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -126,6 +129,8 @@ public class Main extends JPanel implements Runnable {
 		// show an info message
 		error_window.setup("Note: this is a test build", STATE_MAIN_MENU);
 		state = STATE_ERROR_MESSAGE;
+		
+		setFullscreen(true);
 	}
 
 	public void run() {
@@ -350,6 +355,17 @@ public class Main extends JPanel implements Runnable {
 		// draw the screen
 		panel_graphics.drawImage(screen, 0, 0, getWidth(), getHeight(), null);
 		panel_graphics.dispose();
+	}
+	
+	public void setFullscreen(boolean b) {
+		try {
+			GraphicsDevice display = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+			display.setFullScreenWindow(frame);
+			DisplayMode modes[] = display.getDisplayModes();
+			display.setDisplayMode(modes[modes.length-1]);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }
