@@ -13,8 +13,6 @@ import java.awt.event.ComponentListener;
 import java.awt.image.VolatileImage;
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.SocketAddress;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;

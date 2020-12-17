@@ -44,6 +44,10 @@ public class MultiplayerLevel extends LevelAbstract {
 		return gameover;
 	}
 	
+	public boolean isListenerRunning() {
+		return listenerRunning;
+	}
+	
 	public Island[] getIslands() {
 		return islands;
 	}
@@ -179,6 +183,8 @@ public class MultiplayerLevel extends LevelAbstract {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		listenerRunning = false;
 		
 	}
 	
