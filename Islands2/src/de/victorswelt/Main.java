@@ -170,13 +170,17 @@ public class Main extends JPanel implements Runnable {
 			
 			case STATE_MAIN_MENU: {
 				switch(main_menu.update()) {
-					case 0:
+					case 0: // singleplayer button
 						state = STATE_LEVEL_MENU;
 						main_menu.setEnabled(false);
 						break;
-					case 1:
+					case 1: // multiplayer button
 						state = STATE_MP_SERVER_SELECT;
 						main_menu.setEnabled(false);
+						break;
+					case 2: // quit button
+						System.exit(0);
+						break;
 				};
 				break;
 			}
