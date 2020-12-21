@@ -19,6 +19,7 @@ public class ServerSelectMenu {
 		back    =  new Button("Back", 10, 10, 50, 20);
 		connect =  new Button("Connect", 230, 250, 180, 40);
 		ip_field = new TextField(230, 190, 180, 40);
+		ip_field.text = "localhost";
 	}
 	
 	public int update() {
