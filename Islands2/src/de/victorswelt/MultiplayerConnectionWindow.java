@@ -13,6 +13,8 @@ public class MultiplayerConnectionWindow {
 	
 	public MultiplayerConnectionWindow() {
 		cancelButton = new Button("cancel", 280, 280, 80, 40);
+		
+		setEnabled(false);
 	}
 	
 	public boolean update() {
