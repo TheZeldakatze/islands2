@@ -264,6 +264,10 @@ public class Main extends JPanel implements Runnable {
 					state = STATE_MP_SERVER_SELECT;
 				}
 			} break;
+			
+			case STATE_MP_SERVER_GAME: {
+				
+			} break;
 		}
 	}
 	
