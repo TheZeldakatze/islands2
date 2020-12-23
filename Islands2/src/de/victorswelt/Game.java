@@ -7,6 +7,7 @@ import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Game implements MouseInterface {
 	public static final Color SEA_COLOUR = new Color(0, 113, 188);
@@ -15,7 +16,6 @@ public class Game implements MouseInterface {
 	
 	LevelAbstract level;
 	Attack playerAttack;
-	AffineTransform transform, transform2;
 	
 	public Game() {
 		/*Island i[] = {
@@ -38,12 +38,7 @@ public class Game implements MouseInterface {
 		
 		// create a level
 		level = Level.createLevel(level_string);
-		
 		playerAttack = new Attack();
-		playerAttack.source = 0;
-		playerAttack = new Attack();
-		transform = new AffineTransform();
-		transform2 = new AffineTransform();
 		
 		// add the object to the MouseHandler list
 		MouseHandler.getInstance().add_interface(this);
@@ -78,6 +73,7 @@ public class Game implements MouseInterface {
 			Island island = islands[i];
 			g.drawImage(SpriteManager.getInstance().getMapIslandImage(island.team), island.x, island.y, null);
 			g.drawString("" + island.population, island.x + 12, island.y + FONT_POPULATION_INFO.getSize());
+			g.drawString("" + i, island.x + 12, island.y + FONT_POPULATION_INFO.getSize()*3);
 		}
 		
 		// draw the obstacles
@@ -107,22 +103,17 @@ public class Game implements MouseInterface {
 		}
 		
 		// draw the transports
-		ArrayList transports = level.getTransports();
-		//AffineTransform save_transform = g.getTransform();
+		List transports = level.getTransports();
 		for(int i = 0; i<transports.size(); i++) {
 			Transport t = (Transport) transports.get(i);
-			/*transform.setToTranslation(t.x, t.y);
 			
-			transform2.setToRotation(Math.atan(t.y / t.x));
-			transform.concatenate(transform2);
-			g.setTransform(transform);*/
 			if(t.dx == 0) {
 				g.drawImage(SpriteManager.getInstance().getPlaneImage(t.team, 0), (int) t.x, (int) t.y, null);
 			}
 			else
 				g.drawImage(SpriteManager.getInstance().getPlaneImage(t.team, (float) Math.atan2(((float) t.dy), ((float) t.dx))), (int) t.x, (int) t.y, null);
+			g.drawString(""+ t.size, t.x, t.y+FONT_POPULATION_INFO.getSize());
 		}
-		//g.setTransform(save_transform);
 		
 		// draw the hud
 		g.setColor(Color.GREEN);
@@ -140,6 +131,9 @@ public class Game implements MouseInterface {
 	}
 
 	public void onMouseClick(int x, int y) {
+		if(level == null || !level.isReady())
+			return;
+		
 		Island islands[] = level.getIslands();
 		
 		// check if an island was selected

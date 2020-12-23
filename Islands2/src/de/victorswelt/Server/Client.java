@@ -2,10 +2,12 @@ package de.victorswelt.Server;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
+import de.victorswelt.Island;
 import de.victorswelt.NetworkPacketReader;
 import de.victorswelt.Utils;
 
@@ -15,12 +17,10 @@ public class Client implements Runnable {
 	Thread thread;
 	private DataInputStream data_in;
 	private DataOutputStream data_out;
-	private NetworkPacketReader packet;
 	
 	public Client(Server s, Socket sock) {
 		server = s;
 		socket = sock;
-		packet = new NetworkPacketReader();
 		
 		// create a new thread
 		thread = new Thread(this);
@@ -35,24 +35,95 @@ public class Client implements Runnable {
 			data_in  = new DataInputStream(is);
 			data_out = new DataOutputStream(os);
 			
-			while(true) {
-				packet.read(data_in);
+			// get the connection request type
+			switch(data_in.readByte()) {
+				case PacketType.CONNECTION_TYPE_JOIN: {
+					System.out.println("join");
+				} break;
 				
-				switch(packet.type) {
+				case PacketType.CONNECTION_TYPE_INFO: {
+					System.out.println("info");
+					socket.close();
+				} break;
+				
+				default: {
+					System.out.println("[WARN] Invalid connection type recieved from " + socket.getInetAddress());
+					socket.close();
+				}
+			}
+			
+			// write the protocol version
+			data_out.writeInt(Server.PROTOCOL_VERSION);
+			
+			while(true) {
+				byte packetType = data_in.readByte();
+				
+				switch(packetType) {
 					case PacketType.CLIENT_GET_MAP: {
-						String map = "i 405 151 0 40\ni 39 56 0 40\ni 202 250 0 40\ni 538 240 0 40\ni 342 58 2 40\ni 223 117 2 40\ni 377 244 2 40\ni 531 152 2 40\ni 41 253 2 40\ni 176 24 1 50";
+						String map = server.getMap().getMapString();
 						System.out.println("[INFO] sending map:"+map.length()+":"+map);
-						Utils.encodeVarInt(data_out, map.length());
-						data_out.writeUTF(map);
+						synchronized (data_out) {
+							Utils.encodeVarInt(data_out, map.length());
+							data_out.write(map.getBytes());
+						}
+					} break;
+					
+					case PacketType.CLIENT_ADD_TRANSPORT: {
+						int source = Utils.decodeVarNum(data_in);
+						int target = Utils.decodeVarNum(data_in);
+						System.out.println("[INFO] Got a transport request (source, target)" + source + " " + target);
+						server.getMap().addTransport(source, target);
 					} break;
 				}
 			}
 		} catch(Exception e) {
-			
+			e.printStackTrace();
 		}
+		
+		// make sure the socket is closed
+		try {socket.close();} catch(Exception e) {};
 		
 		// remove the client
 		server.removeClient(this);
+	}
+	
+	public void sendIslandPopulationUpdate(int island, int population) {
+		System.out.println("Set population(island,amount)" + island + "," + population);
+		try {
+			synchronized (data_out) {
+				data_out.writeByte(PacketType.SERVER_SET_POPULATION);
+				Utils.encodeVarInt(data_out, island);
+				Utils.encodeVarInt(data_out, population);
+			}
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void sendIslandPopulationAndTeamUpdate(int island, int population, int team) {
+		System.out.println("Set population(island,amount,team)" + island + "," + population + "," + team);
+		try {
+			synchronized (data_out) {
+				data_out.writeByte(PacketType.SERVER_SET_POPULATION_AND_TEAM);
+				Utils.encodeVarInt(data_out, island);
+				Utils.encodeVarInt(data_out, population);
+				Utils.encodeVarInt(data_out, team);
+			}
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void addTransport(int source, int target) {
+		try {
+			synchronized (data_out) {
+				data_out.writeByte(PacketType.SERVER_ADD_TRANSPORT);
+				Utils.encodeVarInt(data_out, source);
+				Utils.encodeVarInt(data_out, target);
+			}
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void kick() {

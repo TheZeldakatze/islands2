@@ -40,21 +40,14 @@ public class TextField extends UIComponent implements KeyboardInterface, MouseIn
 
 	public void onKeyTyped(char c) {
 		if(focused && enabled) {
-			switch(c) {
-				case KeyEvent.VK_BACK_SPACE:
-					if(text.length() > 0)
-						text = text.substring(0, text.length()-1);
-					break;
-				
-				case KeyEvent.VK_SHIFT:
-					break;
-					
-				case KeyEvent.VK_CAPS_LOCK:
-					break;
-					
-				default:
-					System.out.println("Key added to input:" + c);
-					text = text + c;
+			if(c == KeyEvent.VK_BACK_SPACE) {
+				if(text.length() > 0)
+					text = text.substring(0, text.length()-1);
+			}
+			else
+			if(c>31 && c<127) {
+				System.out.println("Key added to input:" + c);
+				text = text + c;
 			}
 		}
 	}

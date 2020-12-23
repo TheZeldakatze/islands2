@@ -4,9 +4,9 @@ public class Transport {
 	public static final int TRANSPORT_SPEED = 2;
 	
 	Level level;
-	Island target;
+	public Island target;
 	float x,y,dx,dy;
-	int size,team;
+	protected int size,team;
 	
 	public Transport(LevelAbstract l, int nx, int ny, float ndx, float ndy, int nteam, int nsize, Island ntarget) {
 		target = ntarget;
@@ -32,6 +32,8 @@ public class Transport {
 			// TODO apply the transport
 			if(target.team == team) {
 				target.population+=size;
+
+				arrivalEvent(false);
 			}
 			else {
 				target.population -= size;
@@ -39,7 +41,10 @@ public class Transport {
 				if(target.population<0) {
 					target.team = team;
 					target.population = -target.population;
+					arrivalEvent(true);
 				}
+				else
+					arrivalEvent(false);
 			}
 			
 			return true;
@@ -48,5 +53,9 @@ public class Transport {
 		// TODO check for a collision with an obstacle
 		
 		return false;
+	}
+	
+	protected void arrivalEvent(boolean changedTeam) {
+		
 	}
 }

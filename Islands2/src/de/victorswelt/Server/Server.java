@@ -3,17 +3,27 @@ package de.victorswelt.Server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Scanner;
 
+import de.victorswelt.FastMath;
+import de.victorswelt.Island;
+
 public class Server implements Runnable {
+	public static final int PROTOCOL_VERSION = 2;
+	
 	static Server server;
-	ArrayList clients;
+	List clients;
 	ServerSocket socket;
-	Thread server_thread;
+	Thread server_thread, game_thread;
 	int port = 53456;
 	boolean running = true;
+	Map map;
 	
 	public static void main(String args[]) {
+		FastMath.init();
+		
 		try {
 			server = new Server();
 		} catch (IOException e) {
@@ -31,6 +41,11 @@ public class Server implements Runnable {
 			// I can't use a switch statement here since I want to use String.startsWith(String)
 			if(line.startsWith("stop")) {
 				server.closeServer();
+			} else if(line.startsWith("listislands")) {
+				Island islands[] = server.map.getIslands();
+				for(int i = 0; i<islands.length; i++) {
+					System.out.println("Island #" + i + " has a population of " + islands[i].population + " and is in team " + islands[i].team);
+				}
 			}
 			else
 				System.out.println("[INFO] command \"" + line + "\" not known!");
@@ -46,12 +61,28 @@ public class Server implements Runnable {
 	private Server() throws IOException {
 		// initialize the connection
 		socket = new ServerSocket(port);
-		clients = new ArrayList();
+		clients = Collections.synchronizedList(new ArrayList());
 		System.out.println("[INFO] Listening on Port: " + port);
+		
+		// initialize the map
+		map = new Map(this);
 		
 		// start the listener thread 
 		server_thread = new Thread(this);
 		server_thread.start();
+		
+		game_thread = new Thread(new Runnable() {
+			
+			public void run() {
+				try {
+					gameUpdateThread();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		game_thread.start();
 	}
 	
 	private void closeServer() {
@@ -91,5 +122,20 @@ public class Server implements Runnable {
 				e.printStackTrace();
 		}
 	}
-
+	
+	private void gameUpdateThread() throws InterruptedException {
+		while(true) {
+			map.update();
+			
+			Thread.sleep(12);
+		}
+	}
+	
+	public Map getMap() {
+		return map;
+	}
+	
+	public List getClients() {
+		return clients;
+	}
 }

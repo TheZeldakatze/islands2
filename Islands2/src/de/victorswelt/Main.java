@@ -34,7 +34,7 @@ public class Main extends JPanel implements Runnable {
 	private static final byte STATE_MAIN_MENU            = 0;
 	private static final byte STATE_LEVEL_MENU           = 1;
 	private static final byte STATE_GAME                 = 2;
-	private static final byte STATE_MP_SERVER_SELECT     = 3; // MP = Multiplayer
+	public static final byte STATE_MP_SERVER_SELECT     = 3; // MP = Multiplayer
 	private static final byte STATE_MP_SERVER_CONNECTING = 4;
 	private static final byte STATE_MP_SERVER_GAME       = 5;
 
@@ -242,7 +242,7 @@ public class Main extends JPanel implements Runnable {
 						
 						// create a multiplayer level
 						System.out.println(socketAddress);
-						MultiplayerLevel ml = new MultiplayerLevel(socketAddress);
+						MultiplayerLevel ml = new MultiplayerLevel(this, socketAddress);
 						game.setLevel(ml);
 						state = STATE_MP_SERVER_CONNECTING;
 						break;
@@ -266,7 +266,14 @@ public class Main extends JPanel implements Runnable {
 			} break;
 			
 			case STATE_MP_SERVER_GAME: {
+				MultiplayerLevel level = (MultiplayerLevel) game.getLevel();
 				
+				// if the connection was closed, return
+				if(!level.isListenerRunning()) {
+					displayErrorStateMessage(STATE_MP_SERVER_SELECT, "Disconnected from server");
+				}
+					
+				game.update();
 			} break;
 		}
 	}
@@ -359,6 +366,11 @@ public class Main extends JPanel implements Runnable {
 		// draw the screen
 		panel_graphics.drawImage(screen, 0, 0, getWidth(), getHeight(), null);
 		panel_graphics.dispose();
+	}
+	
+	public void displayErrorStateMessage(byte returnState, String message) {
+		error_window.setup(message, returnState);
+		state = STATE_ERROR_MESSAGE;
 	}
 	
 	public void setFullscreen(boolean b, boolean performModeSwitch) {
