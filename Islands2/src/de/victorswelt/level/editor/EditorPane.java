@@ -26,6 +26,7 @@ public class EditorPane extends JPanel implements MouseInterface, Runnable {
 	private static final long serialVersionUID = 1L;
 
 	private static final Color transparent = new Color(255, 255, 255, 100);
+	private static final Color red_transparent = new Color(255, 0, 0, 100);
 	
 	static final int TOOL_ISLAND = 0;
 	static final int TOOL_OBSTACLE = 1;
@@ -114,6 +115,10 @@ public class EditorPane extends JPanel implements MouseInterface, Runnable {
 					g.fillRect(toolX, toolY, 32, 32);
 				}
 			}
+			
+			// draw the area of the info pane
+			g.setColor(red_transparent);
+			g.fillRect(0, 460, 640, 20);
 			
 		} while(screen.contentsLost());
 		
