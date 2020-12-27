@@ -11,7 +11,7 @@ import de.victorswelt.FastMath;
 import de.victorswelt.Island;
 
 public class Server implements Runnable {
-	public static final int PROTOCOL_VERSION = 2;
+	public static final int PROTOCOL_VERSION = 3;
 	
 	static Server server;
 	List clients;

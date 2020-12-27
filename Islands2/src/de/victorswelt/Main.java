@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
+import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.Transparency;
 import java.awt.event.ComponentEvent;
@@ -34,9 +35,10 @@ public class Main extends JPanel implements Runnable {
 	private static final byte STATE_MAIN_MENU            = 0;
 	private static final byte STATE_LEVEL_MENU           = 1;
 	private static final byte STATE_GAME                 = 2;
-	public static final byte STATE_MP_SERVER_SELECT     = 3; // MP = Multiplayer
+	public static final byte STATE_MP_SERVER_SELECT      = 3; // MP = Multiplayer
 	private static final byte STATE_MP_SERVER_CONNECTING = 4;
-	private static final byte STATE_MP_SERVER_GAME       = 5;
+	private static final byte STATE_MP_SELECT_TEAM       = 5;
+	private static final byte STATE_MP_SERVER_GAME       = 6;
 
 	static JFrame frame;
 	VolatileImage screen;
@@ -49,6 +51,7 @@ public class Main extends JPanel implements Runnable {
 	ServerSelectMenu server_select_menu;
 	MultiplayerConnectionWindow multiplayer_connection_window;
 	ErrorWindow error_window;
+	TeamSelectorPane team_selector_pane;
 	
 	public static void main(String[] args) {
 		frame = new JFrame();
@@ -57,6 +60,13 @@ public class Main extends JPanel implements Runnable {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().add(m);
 		frame.setVisible(true);
+		
+		// set the proper size
+		Insets frame_insets = frame.getInsets();
+		frame.setSize(640 + frame_insets.bottom + frame_insets.top, 480 + frame_insets.left + frame_insets.right);
+		frame.setLocationRelativeTo(null);
+		frame.toFront();
+		
 		m.start();
 	}
 	
@@ -120,6 +130,7 @@ public class Main extends JPanel implements Runnable {
 		server_select_menu = new ServerSelectMenu();
 		multiplayer_connection_window = new MultiplayerConnectionWindow();
 		error_window = new ErrorWindow();
+		team_selector_pane = new TeamSelectorPane();
 		
 		// when the initialization is finished, change the state to the cleanup one
 		state = STATE_CLEANUP;
@@ -219,6 +230,13 @@ public class Main extends JPanel implements Runnable {
 					case ServerSelectMenu.RESPONSE_LEVEL_SELECTED:
 						server_select_menu.setEnabled(false);
 						
+						// read the username
+						String username = server_select_menu.name_field.text;
+						if(username.isEmpty()) {
+							displayErrorStateMessage(Main.STATE_MP_SERVER_SELECT, "Please specify a username!");
+							break;
+						}
+						
 						// create a socket address
 						InetSocketAddress socketAddress = null;
 						try {
@@ -234,6 +252,7 @@ public class Main extends JPanel implements Runnable {
 							else
 								socketAddress = InetSocketAddress.createUnresolved(split[0], Integer.parseInt(split[1]));
 						} catch(Exception e) {
+							displayErrorStateMessage(Main.STATE_MP_SERVER_SELECT, "Cannot parse server address!");
 							e.printStackTrace();
 							break;
 						}
@@ -242,7 +261,7 @@ public class Main extends JPanel implements Runnable {
 						
 						// create a multiplayer level
 						System.out.println(socketAddress);
-						MultiplayerLevel ml = new MultiplayerLevel(this, socketAddress);
+						MultiplayerLevel ml = new MultiplayerLevel(this, username, socketAddress);
 						game.setLevel(ml);
 						state = STATE_MP_SERVER_CONNECTING;
 						break;
@@ -255,13 +274,23 @@ public class Main extends JPanel implements Runnable {
 				MultiplayerLevel level = (MultiplayerLevel) game.getLevel();
 				if(!level.isLoading()) {
 					multiplayer_connection_window.setEnabled(false);
-					state = STATE_MP_SERVER_GAME;
+					state = STATE_MP_SELECT_TEAM;
 					break;
 				}
 				
 				if(multiplayer_connection_window.update()) {
 					multiplayer_connection_window.setEnabled(false);
 					state = STATE_MP_SERVER_SELECT;
+				}
+			} break;
+			
+			case STATE_MP_SELECT_TEAM: {
+				int ret = team_selector_pane.update();
+				if(ret != -1) {
+					MultiplayerLevel level = (MultiplayerLevel) game.getLevel();
+					level.playerTeam = ret;
+					team_selector_pane.setEnabled(false);
+					state = STATE_MP_SERVER_GAME;
 				}
 			} break;
 			
@@ -338,6 +367,10 @@ public class Main extends JPanel implements Runnable {
 				
 				case STATE_MP_SERVER_CONNECTING: {
 					multiplayer_connection_window.render(g, SCREEN_WIDTH, SCREEN_HEIGHT);
+				} break;
+				
+				case STATE_MP_SELECT_TEAM: {
+					team_selector_pane.render(g, SCREEN_WIDTH, SCREEN_HEIGHT);
 				} break;
 				
 				case STATE_MP_SERVER_GAME: {

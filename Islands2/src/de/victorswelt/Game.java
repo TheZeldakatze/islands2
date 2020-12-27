@@ -3,19 +3,20 @@ package de.victorswelt;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
+import java.awt.event.KeyEvent;
 import java.util.List;
 
-public class Game implements MouseInterface {
+public class Game implements MouseInterface, KeyboardInterface {
+	private static final boolean SHOW_DEBUG_MAP_OBJECT_ID = false;
+	
 	public static final Color SEA_COLOUR = new Color(0, 113, 188);
 	
 	public static final Font FONT_POPULATION_INFO = new Font(Font.MONOSPACED, Font.PLAIN, 10);
 	
 	LevelAbstract level;
 	Attack playerAttack;
+	
+	private boolean showOverlay = false;
 	
 	public Game() {
 		/*Island i[] = {
@@ -26,15 +27,7 @@ public class Game implements MouseInterface {
 		
 		
 		// get the level data
-		String level_string = "";
-		InputStream is = Game.class.getResourceAsStream("/de/victorswelt/level/test.lvl");
-		try {
-			while(is.available()>0) {
-				level_string = level_string + ((char) is.read());
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		String level_string = Utils.readStringFromResource(Game.class.getResourceAsStream("/de/victorswelt/level/test.lvl"));
 		
 		// create a level
 		level = Level.createLevel(level_string);
@@ -42,6 +35,7 @@ public class Game implements MouseInterface {
 		
 		// add the object to the MouseHandler list
 		MouseHandler.getInstance().add_interface(this);
+		KeyboardHandler.getInstance().add_interface(this);
 		
 	}
 	
@@ -73,7 +67,10 @@ public class Game implements MouseInterface {
 			Island island = islands[i];
 			g.drawImage(SpriteManager.getInstance().getMapIslandImage(island.team), island.x, island.y, null);
 			g.drawString("" + island.population, island.x + 12, island.y + FONT_POPULATION_INFO.getSize());
-			g.drawString("" + i, island.x + 12, island.y + FONT_POPULATION_INFO.getSize()*3);
+			
+			// show the island's id if the debug mode is on
+			if(SHOW_DEBUG_MAP_OBJECT_ID)
+				g.drawString("" + i, island.x + 12, island.y + FONT_POPULATION_INFO.getSize()*3);
 		}
 		
 		// draw the obstacles
@@ -112,7 +109,10 @@ public class Game implements MouseInterface {
 			}
 			else
 				g.drawImage(SpriteManager.getInstance().getPlaneImage(t.team, (float) Math.atan2(((float) t.dy), ((float) t.dx))), (int) t.x, (int) t.y, null);
-			g.drawString(""+ t.size, t.x, t.y+FONT_POPULATION_INFO.getSize());
+			
+			// show the size of the transport if the debug mode is on
+			if(SHOW_DEBUG_MAP_OBJECT_ID)
+				g.drawString(""+ t.size, t.x, t.y+FONT_POPULATION_INFO.getSize());
 		}
 		
 		// draw the hud
@@ -154,5 +154,21 @@ public class Game implements MouseInterface {
 	}
 
 	public void onMouseMove(int x, int y) {}
+
+	public void onKeyTyped(char c) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void onKeyPressed(char c) {
+		if(c == KeyEvent.VK_ESCAPE) {
+			showOverlay = !showOverlay;
+		}
+	}
+
+	public void onKeyReleased(char c) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

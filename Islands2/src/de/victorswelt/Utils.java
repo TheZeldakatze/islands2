@@ -4,6 +4,7 @@ import java.awt.Font;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class Utils {
 	public static Font FONT_HEADER  = new Font(Font.SANS_SERIF, Font.BOLD, 24),
@@ -21,6 +22,19 @@ public class Utils {
 		if(x2 > x1 + w1) return false;
 
 		return true;
+	}
+	
+	public static String readStringFromResource(InputStream is) {
+		String s = "";
+		try {
+			while(is.available()>0) {
+				s = s + ((char) is.read());
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return s;
 	}
 	
 	public static int decodeVarNum(DataInputStream dis) throws IOException, NumberFormatException {

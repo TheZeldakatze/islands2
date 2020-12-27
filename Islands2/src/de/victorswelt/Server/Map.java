@@ -14,7 +14,6 @@ import de.victorswelt.Transport;
 public class Map extends LevelAbstract {
 	Server server;
 	String initializationString = "i 96 224 0 128\ni 181 139 1 64\ni 179 306 1 64\ni 269 225 2 32\ni 267 81 2 32\ni 271 387 2 32\ni 350 146 1 16\ni 344 310 1 16\ni 263 144 0 32\ni 270 311 0 32\ni 346 39 3 16\ni 345 423 3 16\ni 415 390 0 8\ni 422 86 0 8\no 183 224\no 343 220\n";
-	//"i 405 151 0 40\ni 39 56 0 40\ni 202 250 1 40\ni 538 240 1 40\ni 342 58 2 40\ni 223 117 2 40";//\ni 377 244 2 40\ni 531 152 2 40\ni 41 253 2 40\ni 176 24 1 50";
 	
 	public Map(Server s) {
 		server = s;

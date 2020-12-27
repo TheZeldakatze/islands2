@@ -8,6 +8,7 @@ public class Button extends UIComponent implements MouseInterface {
 	String text;
 	int x,y,width,height;
 	boolean enabled = true, selected, wasPressed;
+	protected Color background_colour = Color.GRAY, highlight_colour = Color.LIGHT_GRAY;
 	
 	public Button(String ntext, int nx, int ny, int w, int h) {
 		text = ntext;
@@ -25,10 +26,10 @@ public class Button extends UIComponent implements MouseInterface {
 	}
 	
 	public void render(Graphics2D g) {
-		if(selected)
-			g.setColor(Color.LIGHT_GRAY);
+		if(selected || !enabled)
+			g.setColor(highlight_colour);
 		else
-			g.setColor(Color.GRAY);
+			g.setColor(background_colour);
 		g.fillRect(x, y, width, height);
 		FontMetrics fm = g.getFontMetrics();
 		int fontWidth = fm.stringWidth(text);

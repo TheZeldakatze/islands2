@@ -12,13 +12,15 @@ public class ServerSelectMenu {
 	public static final int RESPONSE_BACK_TO_MAIN_MENU = 1;
 	
 	Button back, connect;
-	TextField ip_field;
+	TextField name_field, ip_field;
 	boolean enabled;
 	
 	public ServerSelectMenu() {
 		back    =  new Button("Back", 10, 10, 50, 20);
 		connect =  new Button("Connect", 230, 250, 180, 40);
+		name_field = new TextField(230, 140, 180, 40);
 		ip_field = new TextField(230, 190, 180, 40);
+		name_field.text = "username";
 		ip_field.text = "localhost";
 	}
 	
@@ -41,6 +43,7 @@ public class ServerSelectMenu {
 		back.render(g);
 		connect.render(g);
 		ip_field.render(g);
+		name_field.render(g);
 		
 		// draw the title
 		g.setFont(Utils.FONT_HEADER);
@@ -53,6 +56,7 @@ public class ServerSelectMenu {
 		back.setEnabled(b);
 		connect.setEnabled(b);
 		ip_field.setEnabled(b);
+		name_field.setEnabled(b);
 		enabled = b;
 	}
 }

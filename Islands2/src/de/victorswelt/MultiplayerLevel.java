@@ -3,6 +3,7 @@ package de.victorswelt;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -18,7 +19,7 @@ public class MultiplayerLevel extends LevelAbstract {
 	private DataInputStream data_in;
 	private DataOutputStream data_out;
 	
-	public MultiplayerLevel(Main m, final InetSocketAddress s) {
+	public MultiplayerLevel(Main m, final String username, final InetSocketAddress s) {
 		main = m;
 		playerTeam = 1;
 		transports = new ArrayList();
@@ -33,7 +34,7 @@ public class MultiplayerLevel extends LevelAbstract {
 		// create a listener thread
 		new Thread(new Runnable() {
 			public void run() {
-				networkListenerThread(s);
+				networkListenerThread(s, username);
 			}
 		}, "Multiplayer Connection Thread").start();
 		
@@ -127,16 +128,15 @@ public class MultiplayerLevel extends LevelAbstract {
 			this.obstacles[i] = (Obstacle) obstacles.get(i);
 	}
 	
-	private void networkListenerThread(InetSocketAddress networkAddress) {
+	private void networkListenerThread(InetSocketAddress networkAddress, String username) {
 		// initialize
 		// create a socket
 		try {
-			System.out.println("connecting!");
+			
 			// create a socket
 			socket = new Socket(networkAddress.getHostString(), networkAddress.getPort());
 			data_in  = new DataInputStream(socket.getInputStream());
 			data_out = new DataOutputStream(socket.getOutputStream());
-			System.out.println("connected!");
 			
 			// send the connection type
 			data_out.writeByte(PacketType.CONNECTION_TYPE_JOIN);
@@ -147,6 +147,10 @@ public class MultiplayerLevel extends LevelAbstract {
 				main.displayErrorStateMessage(Main.STATE_MP_SERVER_SELECT, "Wrong Protocol Version: " + protocolVersion +" (Server) != " + Server.PROTOCOL_VERSION + " (Client)");
 				socket.close();
 			}
+			
+			// send the username
+			Utils.encodeVarInt(data_out, username.length());
+			data_out.write(username.getBytes());
 			
 			playerTeam = 0;
 			
@@ -166,7 +170,6 @@ public class MultiplayerLevel extends LevelAbstract {
 						int source = Utils.decodeVarNum(data_in);
 						int target = Utils.decodeVarNum(data_in);
 						createClientTransport(source, target);
-						System.out.println("Server added transport with (source,target) (" + source + ","+ target + ")");
 					} break;
 					
 					case PacketType.SERVER_SET_POPULATION: {
@@ -175,8 +178,6 @@ public class MultiplayerLevel extends LevelAbstract {
 						int population = Utils.decodeVarNum(data_in);
 						if(is != null)
 							is.population = population;
-						
-						System.out.println("Server set population (amount,target) (" + population + ","+ islnum + ")" + is.population);
 					} break;
 					
 					case PacketType.SERVER_SET_POPULATION_AND_TEAM: {
@@ -188,7 +189,6 @@ public class MultiplayerLevel extends LevelAbstract {
 						if(is != null) {
 							is.population = population;
 							is.team = team;
-							System.out.println("Server set population and team (amount,team,target) (" + population + ","+ team + ","+ islnum + ")");
 						}
 					} break;
 				}
@@ -197,7 +197,8 @@ public class MultiplayerLevel extends LevelAbstract {
 			
 		} catch (UnknownHostException e) {
 			main.displayErrorStateMessage(Main.STATE_MP_SERVER_SELECT, "Unknown Host");
-			e.printStackTrace();
+		} catch(ConnectException e) {
+			main.displayErrorStateMessage(Main.STATE_MP_SERVER_SELECT, "Can't connect: " + e.getMessage());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

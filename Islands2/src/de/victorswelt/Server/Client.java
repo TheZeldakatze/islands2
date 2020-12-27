@@ -7,14 +7,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
-import de.victorswelt.Island;
-import de.victorswelt.NetworkPacketReader;
 import de.victorswelt.Utils;
 
 public class Client implements Runnable {
 	Server server;
 	Socket socket;
 	Thread thread;
+	String username;
 	private DataInputStream data_in;
 	private DataOutputStream data_out;
 	
@@ -38,11 +37,11 @@ public class Client implements Runnable {
 			// get the connection request type
 			switch(data_in.readByte()) {
 				case PacketType.CONNECTION_TYPE_JOIN: {
-					System.out.println("join");
+					
 				} break;
 				
 				case PacketType.CONNECTION_TYPE_INFO: {
-					System.out.println("info");
+					
 					socket.close();
 				} break;
 				
@@ -55,13 +54,19 @@ public class Client implements Runnable {
 			// write the protocol version
 			data_out.writeInt(Server.PROTOCOL_VERSION);
 			
+			// read the username
+			int length = Utils.decodeVarNum(data_in);
+			byte buffer[] = new byte[length];
+			data_in.readFully(buffer);
+			username = new String(buffer);
+			System.out.println("[info] " + socket.getInetAddress() + " registered with username " + username);
+			
 			while(true) {
 				byte packetType = data_in.readByte();
 				
 				switch(packetType) {
 					case PacketType.CLIENT_GET_MAP: {
 						String map = server.getMap().getMapString();
-						System.out.println("[INFO] sending map:"+map.length()+":"+map);
 						synchronized (data_out) {
 							Utils.encodeVarInt(data_out, map.length());
 							data_out.write(map.getBytes());
@@ -71,7 +76,6 @@ public class Client implements Runnable {
 					case PacketType.CLIENT_ADD_TRANSPORT: {
 						int source = Utils.decodeVarNum(data_in);
 						int target = Utils.decodeVarNum(data_in);
-						System.out.println("[INFO] Got a transport request (source, target)" + source + " " + target);
 						server.getMap().addTransport(source, target);
 					} break;
 				}
@@ -88,7 +92,6 @@ public class Client implements Runnable {
 	}
 	
 	public void sendIslandPopulationUpdate(int island, int population) {
-		System.out.println("Set population(island,amount)" + island + "," + population);
 		try {
 			synchronized (data_out) {
 				data_out.writeByte(PacketType.SERVER_SET_POPULATION);
@@ -101,7 +104,6 @@ public class Client implements Runnable {
 	}
 	
 	public void sendIslandPopulationAndTeamUpdate(int island, int population, int team) {
-		System.out.println("Set population(island,amount,team)" + island + "," + population + "," + team);
 		try {
 			synchronized (data_out) {
 				data_out.writeByte(PacketType.SERVER_SET_POPULATION_AND_TEAM);
