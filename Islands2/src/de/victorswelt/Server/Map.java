@@ -81,7 +81,6 @@ public class Map extends LevelAbstract {
 		Island source_island = getIsland(source), target_island = getIsland(target);
 		
 		if(source_island != null && target_island != null) {
-			System.out.println(source_island.population +" " + target_island.population);
 			int delta_x = target_island.x-source_island.x;
 			int delta_y = target_island.y-source_island.y;
 			

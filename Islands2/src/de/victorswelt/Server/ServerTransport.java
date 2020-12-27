@@ -15,7 +15,6 @@ public class ServerTransport extends Transport {
 	}
 	
 	protected void arrivalEvent(boolean changedTeam) {
-		System.out.println("Transport of team " + team + " arrived" + "(size: " + size + ")");
 		List clients = server.getClients();
 		if(changedTeam) {
 			for(int i = 0; i<clients.size(); i++) {

@@ -251,7 +251,6 @@ public class MultiplayerLevel extends LevelAbstract {
 	 * the method creates a troop transport
 	 **/
 	public void addTransport(int source, int target) {
-		System.out.println("Sending transport creation packet with (source,target) (" + source + ","+ target + ")");
 		if(source < 0 || target < 0)
 			return;
 		
@@ -264,8 +263,6 @@ public class MultiplayerLevel extends LevelAbstract {
 				e.printStackTrace();
 			}
 		}
-		
-		System.out.println("Sent transport creation packet with (source,target) (" + source + ","+ target + ")");
 	}
 	
 	/**
