@@ -41,6 +41,7 @@ public class Main extends JPanel implements Runnable {
 	private static final byte STATE_MP_SERVER_GAME       = 6;
 
 	static JFrame frame;
+	boolean fullscreen;
 	VolatileImage screen;
 	Image loading_banner;
 	int state;
@@ -185,7 +186,11 @@ public class Main extends JPanel implements Runnable {
 						state = STATE_MP_SERVER_SELECT;
 						main_menu.setEnabled(false);
 						break;
-					case 2: // quit button
+					case 2: // fullscreen button
+						main_menu.setEnabled(false);
+						setFullscreen(!fullscreen, true);
+						break;
+					case 3: // quit button
 						System.exit(0);
 						break;
 				};
@@ -429,6 +434,8 @@ public class Main extends JPanel implements Runnable {
 				
 				if(bestMode != null)
 					display.setDisplayMode(bestMode);
+				
+				fullscreen = true;
 			}
 		} catch(Exception e) {
 			e.printStackTrace();

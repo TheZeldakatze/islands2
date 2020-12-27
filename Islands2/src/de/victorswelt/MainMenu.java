@@ -8,6 +8,7 @@ public class MainMenu {
 	private Button buttons[] = {
 			new Button("Play!", 230, 150, 180, 40),
 			new Button("Multiplayer", 230, 200, 180, 40),
+			new Button("Toggle fullscreen", 230, 250, 180, 40),
 			new Button("Quit", 230, 320, 180, 40)
 	};
 	
