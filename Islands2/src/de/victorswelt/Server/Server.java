@@ -11,7 +11,7 @@ import de.victorswelt.FastMath;
 import de.victorswelt.Island;
 
 public class Server implements Runnable {
-	public static final int PROTOCOL_VERSION = 3;
+	public static final int PROTOCOL_VERSION = 4;
 	
 	static Server server;
 	List clients;
@@ -126,7 +126,16 @@ public class Server implements Runnable {
 	private void gameUpdateThread() throws InterruptedException {
 		while(true) {
 			map.update();
-			
+			if(map.isGameOver()) {
+				map.loadNew(map.initializationString);
+				
+				// update the island population
+				List clients = server.getClients();
+				for(int i = 0; i<clients.size(); i++) {
+					Client client = (Client) clients.get(i);
+					client.sendMapDownloadRequest();
+				}
+			}
 			Thread.sleep(12);
 		}
 	}

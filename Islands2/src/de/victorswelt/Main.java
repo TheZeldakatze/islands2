@@ -275,6 +275,10 @@ public class Main extends JPanel implements Runnable {
 				if(!level.isLoading()) {
 					multiplayer_connection_window.setEnabled(false);
 					state = STATE_MP_SELECT_TEAM;
+					
+					// update the team panel
+					team_selector_pane.setAvailableTeams(level.getAvailableTeams());
+					
 					break;
 				}
 				

@@ -88,6 +88,22 @@ public class TeamSelectorPane {
 		enabled = b;
 	}
 	
+	public void setAvailableTeams(int[] availble_teams) {
+		for(int y = 0; y<buttons.size(); y++) {
+			TeamButton b = ((TeamButton) buttons.get(y));
+			boolean exist = false;
+			for(int i = 0; i<availble_teams.length; i++) {
+				int t = availble_teams[i];
+				if(t == b.team) {
+					exist = true;
+					break;
+				}
+			}
+			
+			b.exists = exist;
+		}
+	}
+	
 	public void create_team_buttons(int[] availble_teams) {
 		int tbutton_x_off = 640 / 2 - availble_teams.length * 32 / 2 + 8;
 		for(int i = 0; i<availble_teams.length; i++) {
@@ -100,6 +116,7 @@ public class TeamSelectorPane {
 
 class TeamButton extends Button {
 	int team;
+	boolean exists = true;
 	
 	public TeamButton(int team, int nx, int ny, int w, int h) {
 		super("" + team, nx, ny, w, h);
@@ -108,6 +125,14 @@ class TeamButton extends Button {
 		highlight_colour  = new Color(brightenValue(background_colour.getRed(), 150, 255), 
 				brightenValue(background_colour.getGreen(), 150, 255),
 				brightenValue(background_colour.getBlue(), 150, 255));
+	}
+	
+	public void render(Graphics2D g) {
+		super.render(g);
+		if(!exists) {
+			g.setColor(Color.RED);
+			g.drawLine(x-5, y-5, x+width+5, y+height+5);
+		}
 	}
 	
 	private int brightenValue(int val, int amount, int max) {

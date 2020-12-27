@@ -103,6 +103,16 @@ public class Client implements Runnable {
 		}
 	}
 	
+	public void sendMapDownloadRequest() {
+		try {
+			synchronized (data_out) {
+				data_out.writeByte(PacketType.SERVER_REQUEST_MAP_DOWNLOAD);
+			}
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public void sendIslandPopulationAndTeamUpdate(int island, int population, int team) {
 		try {
 			synchronized (data_out) {

@@ -68,11 +68,20 @@ public class MultiplayerLevel extends LevelAbstract {
 		super.update();	
 	}
 	
+	
+	// TODO this code is just copied from the single player save system.
+	// I should probably replace it with a compact way to reduce bandwidth usage
 	private void downloadMap() throws NumberFormatException, IOException {
-		data_out.writeByte(PacketType.CLIENT_GET_MAP);
-		int length = Utils.decodeVarNum(data_in);
-		byte buf[] = new byte[length];
-		data_in.readFully(buf);
+		byte buf[];
+		synchronized(data_in) {
+			synchronized (data_out) {
+				data_out.writeByte(PacketType.CLIENT_GET_MAP);
+				int length = Utils.decodeVarNum(data_in);
+				buf = new byte[length];
+				data_in.readFully(buf);
+			}
+		}
+		
 		String text = new String(buf);
 		// parse everything
 		// get the lines
@@ -152,8 +161,6 @@ public class MultiplayerLevel extends LevelAbstract {
 			Utils.encodeVarInt(data_out, username.length());
 			data_out.write(username.getBytes());
 			
-			playerTeam = 0;
-			
 			downloadMap();
 			
 			// end the loading phase
@@ -190,6 +197,10 @@ public class MultiplayerLevel extends LevelAbstract {
 							is.population = population;
 							is.team = team;
 						}
+					} break;
+					
+					case PacketType.SERVER_REQUEST_MAP_DOWNLOAD: {
+						downloadMap();
 					} break;
 				}
 				
@@ -255,6 +266,32 @@ public class MultiplayerLevel extends LevelAbstract {
 		}
 		
 		System.out.println("Sent transport creation packet with (source,target) (" + source + ","+ target + ")");
+	}
+	
+	/**
+	 * returns all available teams */
+	public int[] getAvailableTeams() {
+		ArrayList teams = new ArrayList();
+		for(int i = 0; i<islands.length; i++) {
+			int t = islands[i].team;
+			boolean found = false;
+			for(int j = 0;j<teams.size();j++) {
+				if(((Integer) teams.get(j)).intValue() == t) {
+					found = true;
+					break;
+				}
+			}
+			if(!found)
+				teams.add(new Integer(t));
+		}
+		
+		// create an array
+		int ret[] = new int[teams.size()];
+		for(int i = 0; i<ret.length;i++) {
+			ret[i] = ((Integer) teams.get(i)).intValue();
+		}
+		
+		return ret;
 	}
 
 	public boolean isReady() {

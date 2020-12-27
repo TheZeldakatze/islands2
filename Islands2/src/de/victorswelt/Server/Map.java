@@ -18,17 +18,22 @@ public class Map extends LevelAbstract {
 	public Map(Server s) {
 		server = s;
 		
-		// hacky solution: copy the arrays from a single player level
-		Level l = Level.createLevel(initializationString);
-		islands = l.getIslands();
-		obstacles = l.getObstacles();
-		
 		// create a synchronized list for the transports
 		transports = Collections.synchronizedList(new ArrayList());
+		
+		loadNew(initializationString);
 	}
 	
 	public void update() {
 		super.update();
+	}
+	
+	public void loadNew(String mapString) {
+		// hacky solution: copy the arrays from a single player level
+		Level l = Level.createLevel(initializationString);
+		islands = l.getIslands();
+		obstacles = l.getObstacles();
+		transports.clear();
 	}
 	
 	public String getMapString() {
@@ -43,6 +48,19 @@ public class Map extends LevelAbstract {
 		}
 		
 		return out;
+	}
+	
+	public boolean isGameOver() {
+		int firstTeam = -1;
+		for(int i = 0; i<islands.length; i++) {
+			if(firstTeam == -1)
+				firstTeam = islands[i].team;
+			else
+				if(firstTeam != islands[i].team)
+					return false;
+		}
+		
+		return true;
 	}
 	
 	public Island getIsland(int i) {
@@ -100,10 +118,6 @@ public class Map extends LevelAbstract {
 				
 			}
 		}
-	}
-
-	public boolean isGameOver() {
-		return false;
 	}
 
 	public Obstacle[] getObstacles() {
