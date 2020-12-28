@@ -38,7 +38,7 @@ public class SpriteManager {
 	ColourReplacementFilter replacementFilter;
 	public Image islandMapIcons[];
 	Image planeIcons[][];
-	public Image logo, hud, obstacle;
+	public Image logo, obstacle;
 	
 	private SpriteManager() throws IOException {
 		replacementFilter = new ColourReplacementFilter();
@@ -65,8 +65,7 @@ public class SpriteManager {
 			}
 		}
 		
-		// load the hud
-		hud = createCompatibleImage(ImageIO.read(Main.class.getResource("sprite/hud.png")));
+		// load the logo and obstacles
 		logo = createCompatibleImage(ImageIO.read(Main.class.getResource("sprite/logo.gif")));
 		obstacle = createCompatibleImage(ImageIO.read(Main.class.getResource("sprite/obstacle.png")));
 	}
