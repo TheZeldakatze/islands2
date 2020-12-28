@@ -46,6 +46,8 @@ public class Server implements Runnable {
 				for(int i = 0; i<islands.length; i++) {
 					System.out.println("Island #" + i + " has a population of " + islands[i].population + " and is in team " + islands[i].team);
 				}
+			} else if(line.startsWith("reset")) {
+				server.reset();
 			}
 			else
 				System.out.println("[INFO] command \"" + line + "\" not known!");
@@ -127,14 +129,7 @@ public class Server implements Runnable {
 		while(true) {
 			map.update();
 			if(map.isGameOver()) {
-				map.loadNew(map.initializationString);
-				
-				// update the island population
-				List clients = server.getClients();
-				for(int i = 0; i<clients.size(); i++) {
-					Client client = (Client) clients.get(i);
-					client.sendMapDownloadRequest();
-				}
+				reset();
 			}
 			Thread.sleep(12);
 		}
@@ -142,6 +137,17 @@ public class Server implements Runnable {
 	
 	public Map getMap() {
 		return map;
+	}
+	
+	public void reset() {
+		map.loadNew(map.initializationString);
+		
+		// update the island population
+		List clients = server.getClients();
+		for(int i = 0; i<clients.size(); i++) {
+			Client client = (Client) clients.get(i);
+			client.sendMapDownloadRequest();
+		}
 	}
 	
 	public List getClients() {
