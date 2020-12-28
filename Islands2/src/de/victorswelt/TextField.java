@@ -46,7 +46,6 @@ public class TextField extends UIComponent implements KeyboardInterface, MouseIn
 			}
 			else
 			if(c>31 && c<127) {
-				System.out.println("Key added to input:" + c);
 				text = text + c;
 			}
 		}
