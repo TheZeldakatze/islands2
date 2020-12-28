@@ -418,25 +418,30 @@ public class Main extends JPanel implements Runnable {
 	public void setFullscreen(boolean b, boolean performModeSwitch) {
 		try {
 			GraphicsDevice display = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-			display.setFullScreenWindow(frame);
 			
-			if(performModeSwitch) {
-				// get the avaible display modes
-				DisplayMode modes[] = display.getDisplayModes();
-				
-				// get the one closest to 640x480
-				DisplayMode bestMode = null;
-				
-				for(int i = 0; i<modes.length; i++) {
-					if(modes[i].getWidth() == 640 && modes[i].getWidth() == 480 && (bestMode == null || modes[i].getRefreshRate() > bestMode.getRefreshRate()))
-						bestMode = modes[i];
-				}
-				
-				if(bestMode != null)
-					display.setDisplayMode(bestMode);
-				
-				fullscreen = true;
+			if(fullscreen) {
+				display.setFullScreenWindow(null);
 			}
+			else {
+				display.setFullScreenWindow(frame);
+				if(performModeSwitch) {
+					// get the avaible display modes
+					DisplayMode modes[] = display.getDisplayModes();
+					
+					// get the one closest to 640x480
+					DisplayMode bestMode = null;
+					
+					for(int i = 0; i<modes.length; i++) {
+						if(modes[i].getWidth() == 640 && modes[i].getHeight() == 480 && (bestMode == null || modes[i].getRefreshRate() > bestMode.getRefreshRate() || modes[i].getBitDepth() > bestMode.getBitDepth()))
+							bestMode = modes[i];
+					}
+					
+					if(bestMode != null)
+						display.setDisplayMode(bestMode);
+				}
+			}
+			
+			fullscreen = b;
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
