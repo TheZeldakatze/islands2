@@ -19,6 +19,8 @@ public class MultiplayerLevel extends LevelAbstract {
 	private DataInputStream data_in;
 	private DataOutputStream data_out;
 	
+	ArrayList playerList = new ArrayList();
+	
 	public MultiplayerLevel(Main m, final String username, final InetSocketAddress s) {
 		main = m;
 		playerTeam = 1;
@@ -74,12 +76,9 @@ public class MultiplayerLevel extends LevelAbstract {
 	private void downloadMap() throws NumberFormatException, IOException {
 		byte buf[];
 		synchronized(data_in) {
-			synchronized (data_out) {
-				data_out.writeByte(PacketType.CLIENT_GET_MAP);
-				int length = Utils.decodeVarNum(data_in);
-				buf = new byte[length];
-				data_in.readFully(buf);
-			}
+			int length = Utils.decodeVarNum(data_in);
+			buf = new byte[length];
+			data_in.readFully(buf);
 		}
 		
 		String text = new String(buf);
@@ -161,6 +160,8 @@ public class MultiplayerLevel extends LevelAbstract {
 			Utils.encodeVarInt(data_out, username.length());
 			data_out.write(username.getBytes());
 			
+			// read the map
+			byte packetType = data_in.readByte();
 			downloadMap();
 			
 			// end the loading phase
@@ -168,7 +169,7 @@ public class MultiplayerLevel extends LevelAbstract {
 			
 			// listen
 			while(true) {
-				byte packetType = data_in.readByte();
+				packetType = data_in.readByte();
 				
 				switch(packetType) {
 				
@@ -199,8 +200,23 @@ public class MultiplayerLevel extends LevelAbstract {
 						}
 					} break;
 					
-					case PacketType.SERVER_REQUEST_MAP_DOWNLOAD: {
+					case PacketType.SERVER_SEND_MAP: {
 						downloadMap();
+					} break;
+					
+					case PacketType.SERVER_ANNOUNCE_LOGIN: {
+						String s = readVarIntString();
+						System.out.println(s.getBytes());
+						playerList.add(s);
+					} break;
+					
+					case PacketType.SERVER_ANNOUNCE_LOGOUT: {
+						playerList.remove(readVarIntString());
+					} break;
+					
+					case PacketType.SERVER_KICK_CLIENT: {
+						String text = readVarIntString();
+						main.displayErrorStateMessage(Main.STATE_MP_SERVER_SELECT, "Kicked with reason: " + text);
 					} break;
 				}
 				
@@ -215,7 +231,13 @@ public class MultiplayerLevel extends LevelAbstract {
 		}
 		
 		listenerRunning = false;
-		
+	}
+	
+	public String readVarIntString() throws NumberFormatException, IOException {
+		int size = Utils.decodeVarNum(data_in);
+		byte buf[] = new byte[size];
+		data_in.readFully(buf);
+		return new String(buf);
 	}
 	
 	private void createClientTransport(int source, int target) {

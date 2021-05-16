@@ -11,7 +11,7 @@ import de.victorswelt.FastMath;
 import de.victorswelt.Island;
 
 public class Server implements Runnable {
-	public static final int PROTOCOL_VERSION = 4;
+	public static final int PROTOCOL_VERSION = 5;
 	
 	static Server server;
 	List clients;
@@ -139,14 +139,35 @@ public class Server implements Runnable {
 		return map;
 	}
 	
+	public void broadcastClientLogin(Client src) {
+		for(int i = 0; i<clients.size(); i++) {
+			Client client = (Client) clients.get(i);
+			if(client != src)
+				client.announceLogin(src.username);
+		}
+	}
+	
+	public void broadcastClientLogout(Client src) {
+		for(int i = 0; i<clients.size(); i++) {
+			Client client = (Client) clients.get(i);
+			if(client != src)
+				client.announceLogout(src.username);
+		}
+	}
+	
 	public void reset() {
 		map.loadNew(map.initializationString);
 		
 		// update the island population
-		List clients = server.getClients();
 		for(int i = 0; i<clients.size(); i++) {
 			Client client = (Client) clients.get(i);
-			client.sendMapDownloadRequest();
+			try {
+				client.sendMap();
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	

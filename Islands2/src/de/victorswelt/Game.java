@@ -9,7 +9,8 @@ import java.util.List;
 public class Game implements MouseInterface, KeyboardInterface {
 	private static final boolean SHOW_DEBUG_MAP_OBJECT_ID = false;
 	
-	public static final Color SEA_COLOUR = new Color(0, 113, 188);
+	public static final Color SEA_COLOUR     = new Color(0, 113, 188);
+	public static final Color OVERLAY_COLOUR = new Color(0, 0, 0, 100);
 	
 	public static final Font FONT_POPULATION_INFO = new Font(Font.MONOSPACED, Font.PLAIN, 10);
 	
@@ -126,8 +127,20 @@ public class Game implements MouseInterface, KeyboardInterface {
 		g.setColor(SpriteManager.getInstance().getTeamColor(level.playerTeam));
 		g.fillRect(width - 14, height - 14, 9, 9);
 		
-		//g.drawImage(SpriteManager.getInstance().hud, 0, height - SpriteManager.getInstance().hud.getHeight(null), null); 
-		
+		// draw the overlay
+		if(showOverlay) {
+			g.setColor(OVERLAY_COLOUR);
+			g.fillRect(0, 0, width, height);
+			
+			if(level instanceof MultiplayerLevel) {
+				//
+				g.setColor(Color.WHITE);
+				List players = ((MultiplayerLevel) level).playerList;
+				for(int i = 0; i<players.size(); i++) {
+					g.drawString((String) players.get(i), 5, 30 + 20 * i);
+				}
+			}
+		}
 	}
 
 	public void onMouseClick(int x, int y) {
