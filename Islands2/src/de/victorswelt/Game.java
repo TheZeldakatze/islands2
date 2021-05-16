@@ -19,6 +19,8 @@ public class Game implements MouseInterface, KeyboardInterface {
 	
 	private boolean showOverlay = false;
 	
+	private Button exitButton = new Button("Exit Game", 540, 430, 80, 40);
+	
 	public Game() {
 		/*Island i[] = {
 				new Island(128, 128, 0, 56), new Island(128, 256, 1, 56), new Island(128, 0, 2, 56),
@@ -42,6 +44,12 @@ public class Game implements MouseInterface, KeyboardInterface {
 	
 	public boolean update() {
 		level.update();
+		
+		if(exitButton.wasPressed) {
+			exitButton.setEnabled(false);
+			return true;
+		}
+		
 		return level.isGameOver();
 	}
 	
@@ -132,8 +140,10 @@ public class Game implements MouseInterface, KeyboardInterface {
 			g.setColor(OVERLAY_COLOUR);
 			g.fillRect(0, 0, width, height);
 			
+			exitButton.render(g);
+			
 			if(level instanceof MultiplayerLevel) {
-				//
+				
 				g.setColor(Color.WHITE);
 				List players = ((MultiplayerLevel) level).playerList;
 				for(int i = 0; i<players.size(); i++) {
@@ -176,6 +186,7 @@ public class Game implements MouseInterface, KeyboardInterface {
 	public void onKeyPressed(char c) {
 		if(c == KeyEvent.VK_ESCAPE) {
 			showOverlay = !showOverlay;
+			exitButton.setEnabled(showOverlay);
 		}
 	}
 
