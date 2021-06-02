@@ -21,7 +21,7 @@ public class SpriteManager {
 	
 	private static final Color ISLAND_COLOR_KEY = new Color(255,0,255);
 	
-	private static final int PLANE_ROTATIONS = 90;
+	private static final int PLANE_ROTATIONS = 20;
 	
 	private static final Color islandColours[] = {
 		new Color(255, 0, 0),
@@ -146,6 +146,9 @@ public class SpriteManager {
 		Graphics2D g = img.createGraphics();
 		g.drawImage(input, 0, 0, null);
 		g.dispose();
+		
+		// the original can probably be disposed of
+		input.flush();
 		
 		return img;
 	}
