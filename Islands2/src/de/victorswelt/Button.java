@@ -42,6 +42,7 @@ public class Button extends UIComponent implements MouseInterface {
 		if(enabled) {
 			if(Utils.checkCollision(this.x, this.y, width, height, x, y, 1, 1)) {
 				wasPressed = true;
+				SoundManager.SOUND_BUTTON_PRESSED.play();
 			}
 		}
 	}

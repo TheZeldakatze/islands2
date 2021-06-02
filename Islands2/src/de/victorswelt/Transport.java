@@ -16,6 +16,9 @@ public class Transport {
 		dy = ndy;
 		team = nteam;
 		size = nsize;
+		
+		// play a plane sound
+		SoundManager.SOUND_PLANE_1.play();
 	}
 	
 	/**

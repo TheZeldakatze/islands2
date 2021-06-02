@@ -151,6 +151,9 @@ public class Game implements MouseInterface, KeyboardInterface {
 				}
 			}
 		}
+		
+		// TODO randomly play sounds
+		
 	}
 
 	public void onMouseClick(int x, int y) {

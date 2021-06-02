@@ -120,6 +120,7 @@ public class Main extends JPanel implements Runnable {
 		
 		try {
 			SpriteManager.init();
+			SoundManager.init();
 			game = new Game();
 		} catch (IOException e) {
 			
@@ -164,6 +165,7 @@ public class Main extends JPanel implements Runnable {
 			
 			case STATE_CLEANUP: {
 				loading_banner.flush();
+				loading_banner = null;
 				System.gc(); // I know that you should not use System.gc(), but here would be an excellent time for a garbage collection
 				state = STATE_MAIN_MENU;
 				break;
